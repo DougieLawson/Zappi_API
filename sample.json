@@ -1,0 +1,60 @@
+{
+  "U10008888": [
+    {
+      "dow": "Tue",	"_":"  Day of week ",
+      "dom": 22,	"_":"  Day of month ",
+      "mon": 9,		"_":"  Month ",
+      "yr": 2020,	"_":"  Year ",
+      "imp": 24120,	"_":"  Imported from grid ",
+      "v1": 2471,	"_":"  Voltage ",
+      "frq": 5008,	"_":"  Frequency * 100 ",
+      "pect1": 24060,	"_":"  Positive grid CT ",
+      "pect2": 60,	"_":"  Positive internal CT ",
+      "pect3": 60,	"_":"  Positive CT3 - may be spurious ",
+      "nect3": 180	,"_":"  Negative CT3 - may be spurious "
+    },
+    {
+      "min": 1,		"_":"  Minute - missing if zero ",
+      "dow": "Tue",
+      "dom": 22,
+      "mon": 9,
+      "yr": 2020,
+      "imp": 22860,
+      "v1": 2471,
+      "frq": 5008,
+      "pect1": 22800,
+      "pect2": 60,
+      "pect3": 60
+    },
+    {
+      "min": 2,
+      "hr": 21,		"_":"  Hour - missing if zero ",
+      "dow": "Tue",
+      "dom": 22,
+      "mon": 9,
+      "yr": 2020,
+      "imp": 487020,
+      "h1d": 457140,
+      "v1": 2439,
+      "frq": 5008,
+      "pect1": 487080,
+      "nect2": 120,
+      "nect3": 420
+    },
+    {
+      "min": 12,
+      "hr": 21,
+      "dow": "Tue",
+      "dom": 22,
+      "mon": 9,
+      "yr": 2020,
+      "imp": 487440,
+      "h1d": 457560,	"_":"  Diverted to Zappi ",
+      "v1": 2444,
+      "frq": 5008,
+      "pect1": 487320,
+      "nect2": 60,
+      "nect3": 420
+    }
+  ]
+}

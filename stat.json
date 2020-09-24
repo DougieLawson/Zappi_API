@@ -1,0 +1,45 @@
+[
+  {
+    "eddi": []
+  },
+  {
+    "zappi": [
+      {
+        "dat": "20-09-2020",		"_":" Date ",
+        "tim": "10:26:05",		"_":" Time ",
+        "ectp2": 546,			
+        "ectp3": 3,
+        "ectt1": "Internal Load",
+        "ectt2": "Grid",
+        "ectt3": "None",		"_":" Ignore pect3/nect3 values ",
+        "frq": 50.08,			"_":" Grid frequency ",
+        "grd": 548,
+        "pha": 1,			"_":" Number of phases ",
+        "sno": 10007777,		"_":" Zappi serial number ",
+        "sta": 1,
+        "vol": 251.1,			"_":" Grid voltage ",
+        "pri": 1,
+        "cmt": 254,
+        "zmo": 1,
+        "tbk": 5,			"_":" 5 == charging ",
+        "che": 8.83,			"_":" kWh charged today ",
+        "pst": "A",
+        "mgl": 50,
+        "sbh": 17,
+        "sbk": 5,
+        "ectt4": "None",
+        "ectt5": "None",
+        "ectt6": "None",
+        "fwv": "3560S3.037",
+        "dst": 1,			"_":"  Daylight saving",
+        "lck": 16
+      }
+    ]
+  },
+  {
+    "harvi": []
+  },
+  {
+    "asn": "s6.myenergi.net"		,"_":"  Active server name"
+  }
+]

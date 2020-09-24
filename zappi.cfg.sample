@@ -1,0 +1,12 @@
+Zappi : 
+{
+  username = "10008888";
+  password = "password";
+};
+Database : 
+{
+  sqlhost = "192.168.3.14";
+  sqldbase = "EV";
+  sqluser = "DB_username";
+  sqlpwd = "DBpassword";
+};
