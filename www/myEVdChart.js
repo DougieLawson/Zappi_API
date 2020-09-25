@@ -1,3 +1,6 @@
+/*
+   Copyright © Dougie Lawson, 2020, All rights reserved.
+ */
 
 function renderChart(dt, fu, c, h) {
 

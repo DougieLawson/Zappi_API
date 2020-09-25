@@ -1,3 +1,5 @@
+-- Copyright © Dougie Lawson, 2020, All rights reserved 
+
 CREATE TABLE IF NOT EXISTS `Zappi_test` (
   `datetime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `imported` float NOT NULL,

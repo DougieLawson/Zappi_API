@@ -1,6 +1,10 @@
 #ifndef PARSEJ_H
 #define PARSEJ_H
 
+/* 
+ Copyright © Dougie Lawson, 2020, All rights reserved 
+*/
+
 #define FALSE 0
 #define TRUE !(FALSE)
 
