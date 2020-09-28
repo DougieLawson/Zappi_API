@@ -34,6 +34,7 @@ function renderChart(dt, fu, c, h) {
 		]
 	},
 	options: {
+		spanGaps: true,
 		scales: {
 			xAxes: [{
 				time: {
