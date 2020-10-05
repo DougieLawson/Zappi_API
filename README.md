@@ -7,12 +7,12 @@ for the Myenergi API (complete with all of it's quirks)
 
 The detail for the JSON returned by the Myenergi API is documented in some detail in [Andy's JSON decoding](https://github.com/twonk/MyEnergi-App-Api)
 
-###Todos
+### Todos
 Needs Zappi_test changed to a permanent table name.
 
 /home/pi_d/c needs to be /home/pi. 
 
-##Installation
+## Installation
 
 You'll need the `json-c`, `config` and `cmake` packages along with the usual build-essentials.
 
