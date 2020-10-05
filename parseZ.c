@@ -2,12 +2,16 @@
  Copyright © Dougie Lawson, 2020, All rights reserved 
 */
 
+#define _XOPEN_SOURCE 700
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <getopt.h>
+#include <time.h>     
 #include <curl/curl.h>
 #include "parseJ.h"
+#define CONFIG_FILE "/home/pi_d/.zappi.cfg"
 
 char nameBuff1[24];
 char nameBuff2[24];
@@ -18,7 +22,8 @@ const char* d_host;
 const char* d_db;
 const char* d_user;
 const char* d_pwd;
-
+time_t t;
+struct tm tm;
 
 static size_t curl_print(void* ptr, size_t size, size_t nmemb, void* stream)
 {
@@ -29,16 +34,85 @@ static size_t curl_print(void* ptr, size_t size, size_t nmemb, void* stream)
 char* makeURL ()
 {
 	char* url = malloc(55);
-	time_t t =time(NULL);
-	struct tm tm =*gmtime(&t);
 	sprintf(url, "https://s6.myenergi.net/cgi-jday-Z%s-%d-%d-%d", serno, tm.tm_year + 1900, tm.tm_mon +1, tm.tm_mday);
-	//printf("URL: %s \n", url);
+	// printf("URL: %s \n", url);
 
 	return url;
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
+	int c;
+	char *s;
+	t = time(NULL);
+	tm = *gmtime(&t);
+	s = NULL;
+ 	while (1)
+	{
+		int this_option_optind = optind ? optind : 1;
+		int option_index = 0;
+		static struct option long_options[] = {
+			{"iso", required_argument, 0,  0 },
+			{"eur", required_argument, 0,  0 },
+			{"usa", required_argument, 0,  0 },
+			{"ymd", required_argument, 0,  0 },
+			{"dmy", required_argument, 0,  0 },
+			{"mdy", required_argument, 0,  0 },
+			{0,          0,                 0,  0 }
+		};
+		c = getopt_long(argc, argv, "i:e:a:", long_options, &option_index);
+		if (c == -1) break;
+		switch (c)
+		{
+			case 0:
+	//			printf("option --%s", long_options[option_index].name);
+				if (optarg) printf(" with value %s ", optarg);
+
+				if (option_index == 0 || option_index == 3)
+				{
+					s = strptime(optarg, "%Y/%m/%d", &tm);
+	//				printf("idx: %d opt: %s %s ",option_index, long_options[option_index].name, optarg);
+				}
+				else if (option_index == 1 || option_index == 4)
+				{
+					s = strptime(optarg, "%d/%m/%Y", &tm);
+	//				printf("idx: %d opt: %s %s ",option_index, long_options[option_index].name, optarg);
+				}
+				else if (option_index == 2 || option_index == 5)
+				{
+					s = strptime(optarg, "%m/%d/%Y", &tm);
+	//				printf("idx: %d opt: %s %s ",option_index, long_options[option_index].name, optarg);
+				}
+				else
+				{
+					printf("idx: %d opt: %s %s ",option_index, long_options[option_index].name, optarg);
+					s = NULL;
+				}
+				printf("\n");
+				break;
+			case 'i':
+	//			printf("option -i with value '%s'\n", optarg);
+				s = strptime(optarg, "%Y/%m/%d", &tm);
+				break;
+			case 'e':
+	//			printf("option -e with value '%s'\n", optarg);
+				s = strptime(optarg, "%d/%m/%Y", &tm);
+				break;
+			case 'a':
+	//			printf("option -a with value '%s'\n", optarg);
+				s = strptime(optarg, "%m/%d/%Y", &tm);
+				break;
+			default:
+				s = NULL;
+				break;
+		}
+
+		if (s == NULL) {
+			printf("Cannot parse date"); 
+			return 1;
+		}
+	}
+
 	config_t cfg;
 	config_setting_t *root, *setting;
 	config_setting_t *zappi_g, *z_user, *z_pwd;
@@ -60,7 +134,7 @@ int main(void)
 	curl = curl_easy_init();
  
 	config_init(&cfg);
-	if(! config_read_file(&cfg, "/home/pi_d/.zappi.cfg"))
+	if(! config_read_file(&cfg, CONFIG_FILE))
 	{
 		fprintf(stderr, "%s:%d - %s\n", config_error_file(&cfg), config_error_line(&cfg), config_error_text(&cfg));
 		config_destroy(&cfg);
@@ -97,10 +171,6 @@ int main(void)
 		curl_easy_setopt(curl, CURLOPT_URL, "https://s6.myenergi.net/cgi-jstatus-*");
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_print);
 
-	// DEBUG FIXME
-	//	curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-	//     	curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
-	
 		if (outfile1)
 		{
 			curl_easy_setopt(curl, CURLOPT_WRITEDATA, outfile1);

@@ -1,5 +1,0 @@
-This is missing JQuery and ChartJS
-
-Run ./install.sh to pull the latest versions
-
-Add a spinner GIF if the Chart JSON takes a long time loading.

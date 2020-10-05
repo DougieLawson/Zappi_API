@@ -8,6 +8,7 @@
 #include <getopt.h>
 #include <libconfig.h>
 #include <sys/stat.h>
+#define CONFIG_FILE "/home/pi_d/.zappi.cfg"
 
 #define FALSE 0
 #define TRUE !(FALSE)
@@ -16,7 +17,7 @@ int main(int argc, char **argv)
 {
 	int c;
 	int digit_optind = 0;
-	static const char *output_file = ".zappi.cfg";
+	static const char *output_file = CONFIG_FILE;
 	mode_t mode;
 	config_t cfg;
 	config_setting_t *root, *setting;

@@ -66,7 +66,7 @@ function renderChart(dt, fu, c, h) {
 }
 
 function getChartData() {
-	$("#loadingMessage").html('<img src="giphy.gif" alt="" srcset="">');
+	$("#loadingMessage").html('<img src="spinner.gif" alt="" srcset="">');
 	$.getJSON("../cgi-bin/weeklyEV",
 	function (data) {
 		$("#loadingMessage").html("");
