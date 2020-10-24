@@ -229,7 +229,7 @@ void sql_insert()
 	bind[15].is_null = is_null[15];
 	bind[15].error = &error[15];
 
-	w_house = w_imported - w_zappidiv;
+	w_house = w_imported - (w_zappidiv + w_zappiimp);
 	bind[16].buffer_type = MYSQL_TYPE_FLOAT;
 	bind[16].buffer = &w_house;
 	is_null[16] = (my_bool)0;

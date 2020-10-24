@@ -11,6 +11,7 @@
 #include <mysql.h>
 #include <libgen.h>
 #define CONFIG_FILE "/usr/local/etc/zappi.cfg"
+#define COLUMNS 5
 
 char *comma = " ";
 
@@ -30,13 +31,13 @@ int main(int argc, char* argv[])
 	int rc;
 	int param_count, column_count;
 	MYSQL_STMT *stmtTZ, *stmt;
-	MYSQL_BIND bind[4];
+	MYSQL_BIND bind[COLUMNS];
 	MYSQL_RES *prepare_meta_result;
 	MYSQL_TIME ts;
-	float full_usage, charging, house;
-	unsigned long length[4];
-	my_bool is_null[4];
-	my_bool error[4];
+	float full_usage, zappidiv, zappiimp, charging, house;
+	unsigned long length[COLUMNS];
+	my_bool is_null[COLUMNS];
+	my_bool error[COLUMNS];
 	my_bool trunc = 0;
 	char *sqlTZ, *sql;
 
@@ -131,13 +132,13 @@ int main(int argc, char* argv[])
 		exit_on_error("Stmt init", con);
 	}
 
-	if (!strcmp(basename(getenv("REQUEST_URI")), "dailyEV"))
+	if (!strcmp(basename(getenv("REQUEST_URI")), "weeklyEV"))
 	{
-		sql = "SELECT datetime, imported, zappidiv, house FROM Zappi_test where datetime between date_sub(now(), interval 1 day) and now() order by datetime;";
+		sql = "SELECT datetime, imported, zappidiv, zappiimp, house FROM Zappi_test where datetime between date_sub(now(), interval 7 day) and now() order by datetime;";
 	}
 	else
 	{
-		sql = "SELECT datetime, imported, zappidiv, house FROM Zappi_test where datetime between date_sub(now(), interval 7 day) and now() order by datetime;";
+		sql = "SELECT datetime, imported, zappidiv, zappiimp, house FROM Zappi_test where datetime between date_sub(now(), interval 1 day) and now() order by datetime;";
 	}
 	if (mysql_stmt_prepare(stmt, sql, strlen(sql)))
 	{
@@ -163,7 +164,7 @@ int main(int argc, char* argv[])
 	}
 
 	column_count = mysql_num_fields(prepare_meta_result);
-	if (column_count != 4)
+	if (column_count != COLUMNS)
 	{
 		exit_on_error("Invalid column count", con);
 	}
@@ -183,16 +184,22 @@ int main(int argc, char* argv[])
 	bind[1].error = &error[1];
 
 	bind[2].buffer_type = MYSQL_TYPE_FLOAT;
-	bind[2].buffer = (float *)&charging;
+	bind[2].buffer = (float *)&zappiimp;
 	bind[2].is_null = &is_null[2];
 	bind[2].length = &length[2];
 	bind[2].error = &error[2];
 
 	bind[3].buffer_type = MYSQL_TYPE_FLOAT;
-	bind[3].buffer = (float *)&house;
+	bind[3].buffer = (float *)&zappidiv;
 	bind[3].is_null = &is_null[3];
 	bind[3].length = &length[3];
 	bind[3].error = &error[3];
+
+	bind[4].buffer_type = MYSQL_TYPE_FLOAT;
+	bind[4].buffer = (float *)&house;
+	bind[4].is_null = &is_null[4];
+	bind[4].length = &length[4];
+	bind[4].error = &error[4];
 
 	if (mysql_stmt_bind_result(stmt, bind))
 	{
@@ -208,6 +215,7 @@ int main(int argc, char* argv[])
 	rc = mysql_stmt_fetch(stmt);
 	while(!rc)
 	{
+		charging = zappiimp + zappidiv;
 		printf("%s{",comma);
 		comma = ",";
 		printf("\"date_time\":");

@@ -66,7 +66,7 @@ int main(int argc, char **argv)
 		{
 			case 0:
 	//			printf("option --%s", long_options[option_index].name);
-				if (optarg) printf(" with value %s ", optarg);
+	//			if (optarg) printf(" with value %s ", optarg);
 
 				if (option_index == 0 || option_index == 3)
 				{
@@ -184,8 +184,8 @@ int main(int argc, char **argv)
 		}
 	}
 
-	// TODO this is an ugly hack 
-	sleep(180); // give the server 3 minutes so we get the full hout
+	// this is an ugly hack 
+	sleep(150); // give the server 2.5 minutes so we get the full hour
 
 	strncpy(nameBuff2, "/tmp/parseZFil2-XXXXXX",23);
 	int tempnam2 = mkstemp(nameBuff2);
