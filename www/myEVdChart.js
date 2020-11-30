@@ -49,7 +49,7 @@ function renderChart(dt, fu, c, h) {
 				type: 'linear',
 				position: 'left',
 				ticks: {
-					max: 12000
+					max: 12500
 				}
 			},
 			{
@@ -57,7 +57,7 @@ function renderChart(dt, fu, c, h) {
 				type: 'linear', 
 				position: 'right',
 				ticks: {
-					max: 12000
+					max: 12500
 				}
 			}]
 			},

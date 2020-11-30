@@ -43,10 +43,11 @@ char* makeURL ()
 int main(int argc, char **argv)
 {
 	int c;
+	int no_delay = FALSE;
 	char *s;
 	t = time(NULL);
+	s = (char*)TRUE;
 	tm = *gmtime(&t);
-	s = NULL;
  	while (1)
 	{
 		int this_option_optind = optind ? optind : 1;
@@ -58,9 +59,10 @@ int main(int argc, char **argv)
 			{"ymd", required_argument, 0,  0 },
 			{"dmy", required_argument, 0,  0 },
 			{"mdy", required_argument, 0,  0 },
+			{"nodelay", no_argument, 0, 0 },
 			{0,          0,                 0,  0 }
 		};
-		c = getopt_long(argc, argv, "i:e:a:", long_options, &option_index);
+		c = getopt_long(argc, argv, "i:e:a:n", long_options, &option_index);
 		if (c == -1) break;
 		switch (c)
 		{
@@ -83,6 +85,10 @@ int main(int argc, char **argv)
 					s = strptime(optarg, "%m/%d/%Y", &tm);
 	//				printf("idx: %d opt: %s %s ",option_index, long_options[option_index].name, optarg);
 				}
+				else if (option_index == 6)
+				{
+					no_delay = TRUE;
+				}
 				else
 				{
 					printf("idx: %d opt: %s %s ",option_index, long_options[option_index].name, optarg);
@@ -102,13 +108,15 @@ int main(int argc, char **argv)
 	//			printf("option -a with value '%s'\n", optarg);
 				s = strptime(optarg, "%m/%d/%Y", &tm);
 				break;
+			case 'n':
+				no_delay = TRUE;
+				break;
 			default:
-				s = NULL;
 				break;
 		}
 
 		if (s == NULL) {
-			printf("Cannot parse date"); 
+			printf("Cannot parse date\n"); 
 			return 1;
 		}
 	}
@@ -184,8 +192,11 @@ int main(int argc, char **argv)
 		}
 	}
 
-	// this is an ugly hack 
-	sleep(150); // give the server 2.5 minutes so we get the full hour
+	// this is an ugly hack
+	if (no_delay == FALSE) 
+	{
+		sleep(150); // give the server 2.5 minutes so we get the full hour
+	}
 
 	strncpy(nameBuff2, "/tmp/parseZFil2-XXXXXX",23);
 	int tempnam2 = mkstemp(nameBuff2);
