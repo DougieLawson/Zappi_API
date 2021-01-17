@@ -24,6 +24,7 @@ void sql_init();
 void sql_insert();
 int sql_terminate();
 void sql_commit();
+void curl2();
 
 extern char* current_key;
 extern int minute;

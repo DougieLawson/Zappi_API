@@ -40,7 +40,7 @@ char* ectt_5;
 char* ectt_6;
 int cts[6];
 
-enum { unknown, min, hr, dow, dom, mon, yr, imp, expd, gen, gep, h1d, h1b,  v1, frq, pect1, nect1, pect2, nect2, pect3, nect3, sno, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, };
+enum { unknown, min, hr, dow, dom, mon, yr, imp, expd, gen, gep, h1d, h1b, v1, frq, pect1, nect1, pect2, nect2, pect3, nect3, sno, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, dat, tim, ectp2, ectp3, ectp4, grd, pha, sta, vol, pri, cmt, zmo, tbk, che, pst, mgl, sbh, sbk, fwv, dst, lck, asn, };
 char* none_str = "None";
 
 float watts(int zValue)
@@ -101,6 +101,28 @@ int lexer(const char *s)
 		{ "ectt4", ectt4 },
 		{ "ectt5", ectt5 },
 		{ "ectt6", ectt6 },
+		{ "dat", dat },
+		{ "tim", tim },
+		{ "ectp2", ectp2 },
+		{ "ectp3", ectp3 },
+		{ "ectp4", ectp4 },
+		{ "grd", grd },
+		{ "pha", pha },
+		{ "sta", sta },
+		{ "vol", vol },
+		{ "pri", pri },
+		{ "cmt", cmt },
+		{ "zmo", zmo },
+		{ "tbk", tbk },
+		{ "che", che },
+		{ "pst", pst },
+		{ "mgl", mgl },
+		{ "sbh", sbh },
+		{ "sbk", sbk },
+		{ "fwv", fwv },
+		{ "dst", dst },
+		{ "lck", lck },
+		{ "asn", asn },
 	};
 	struct entry_s *p = token_table;
 	for(; p->key != NULL && strcmp(p->key, s) != 0; ++p);
@@ -184,6 +206,7 @@ json_object* decode_json(json_object* jObj)
 		case sno:
 			serno = strdup(json_object_get_string(jObj));
 			//printf("SNO: %s\n", serno);
+			curl2();
 			break;
 		case ectt1:
 			ectt_1 = strdup(json_object_get_string(jObj));
@@ -219,6 +242,50 @@ json_object* decode_json(json_object* jObj)
 			ectt_6 = strdup(json_object_get_string(jObj));
 			cts[6] = strcmp(ectt_6, none_str);
 			//printf("ectt_6 %s cts[6] %d\n", ectt_6, cts[6]);
+			break;
+		case dat:
+			break;
+		case tim:
+			break;
+		case ectp2:
+			break;
+		case ectp3:
+			break;
+		case ectp4:
+			break;
+		case grd:
+			break;
+		case pha:
+			break;
+		case sta:
+			break;
+		case vol:
+			break;
+		case pri:
+			break;
+		case cmt:
+			break;
+		case zmo:
+			break;
+		case tbk:
+			break;
+		case che:
+			break;
+		case pst:
+			break;
+		case mgl:
+			break;
+		case sbh:
+			break;
+		case sbk:
+			break;
+		case fwv:
+			break;
+		case dst:
+			break;
+		case lck:
+			break;
+		case asn:
 			break;
 
 	}

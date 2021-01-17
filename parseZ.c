@@ -1,5 +1,5 @@
 /* 
- Copyright © Dougie Lawson, 2020, All rights reserved 
+ Copyright © Dougie Lawson, 2020-2021, All rights reserved 
 */
 
 #define _XOPEN_SOURCE 700
@@ -22,14 +22,14 @@ const char* d_host;
 const char* d_db;
 const char* d_user;
 const char* d_pwd;
+
+const char* username;
+const char* password;
+
 time_t t;
 struct tm tm;
 
-static size_t curl_print(void* ptr, size_t size, size_t nmemb, void* stream)
-{
-	size_t written =  fwrite(ptr, size, nmemb, (FILE*)stream);
-	return written; 
-}
+json_object* statusz;
 
 char* makeURL ()
 {
@@ -38,6 +38,46 @@ char* makeURL ()
 	// printf("URL: %s \n", url);
 
 	return url;
+}
+
+static size_t curl_print(void* ptr, size_t size, size_t nmemb, void* stream)
+{
+	size_t written =  fwrite(ptr, size, nmemb, (FILE*)stream);
+	return written; 
+}
+
+void curl2()
+{
+	CURL* curl;
+	CURLcode res;
+	strncpy(nameBuff2, "/tmp/parseZFil2-XXXXXX",23);
+	int tempnam2 = mkstemp(nameBuff2);
+	outfile2 = fopen(nameBuff2, "wb");
+
+	curl = curl_easy_init();
+	if(curl)
+	{
+		curl_easy_setopt(curl, CURLOPT_USERNAME, username);
+		curl_easy_setopt(curl, CURLOPT_PASSWORD, password);
+		curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
+		curl_easy_setopt(curl, CURLOPT_URL, makeURL());
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_print);
+
+		if (outfile2)
+		{
+			curl_easy_setopt(curl, CURLOPT_WRITEDATA, outfile2);
+
+    			res = curl_easy_perform(curl);
+   		 	if(res != CURLE_OK) fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+			fclose(outfile2);
+			statusz = json_object_from_file(nameBuff2);
+			json_parse(statusz);
+		}
+	curl_easy_cleanup(curl);
+	}
+
+	curl_global_cleanup();
+	unlink(nameBuff2);
 }
 
 int main(int argc, char **argv)
@@ -125,13 +165,10 @@ int main(int argc, char **argv)
 	config_setting_t *root, *setting;
 	config_setting_t *zappi_g, *z_user, *z_pwd;
 	config_setting_t *database_g, *db_host, *db_db, *db_pwd, *db_user;
-	const char* username;
-	const char* password;
 
 	CURL* curl;
 	CURLcode res;
 
-	json_object* statusz;
 
 	memset(nameBuff1,0,sizeof(nameBuff1));
 	strncpy(nameBuff1, "/tmp/parseZFil1-XXXXXX",23);
@@ -187,46 +224,18 @@ int main(int argc, char **argv)
    		 	if(res != CURLE_OK) fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
 
 			fclose(outfile1);
+
+			// this is an ugly hack
+			if (no_delay == FALSE) 
+			{
+				sleep(150); // give the server 2.5 minutes so we get the full hour
+			}
+
 			statusz = json_object_from_file(nameBuff1);
 			json_parse(statusz);
 		}
 	}
-
-	// this is an ugly hack
-	if (no_delay == FALSE) 
-	{
-		sleep(150); // give the server 2.5 minutes so we get the full hour
-	}
-
-	strncpy(nameBuff2, "/tmp/parseZFil2-XXXXXX",23);
-	int tempnam2 = mkstemp(nameBuff2);
-	outfile2 = fopen(nameBuff2, "wb");
-
-	if(curl)
-	{
-		curl_easy_setopt(curl, CURLOPT_USERNAME, username);
-		curl_easy_setopt(curl, CURLOPT_PASSWORD, password);
-		curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
-		curl_easy_setopt(curl, CURLOPT_URL, makeURL());
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_print);
-
-		if (outfile2)
-		{
-			curl_easy_setopt(curl, CURLOPT_WRITEDATA, outfile2);
-
-    			res = curl_easy_perform(curl);
-   		 	if(res != CURLE_OK) fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-			fclose(outfile2);
-			statusz = json_object_from_file(nameBuff2);
-			json_parse(statusz);
-		}
-	curl_easy_cleanup(curl);
-	}
-
-	curl_global_cleanup();
-
 	unlink(nameBuff1);
-	unlink(nameBuff2);
 
 	config_destroy(&cfg);
 	sql_terminate(con);
