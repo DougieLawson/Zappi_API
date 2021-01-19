@@ -25,18 +25,27 @@ const char* d_pwd;
 
 const char* username;
 const char* password;
+const char* asn;
 
 time_t t;
 struct tm tm;
+enum URLtype{curlJstatus, curlJday};
 
 json_object* statusz;
 
-char* makeURL ()
+char* makeURL (enum URLtype urlT)
 {
 	char* url = malloc(55);
-	sprintf(url, "https://s6.myenergi.net/cgi-jday-Z%s-%d-%d-%d", serno, tm.tm_year + 1900, tm.tm_mon +1, tm.tm_mday);
-	// printf("URL: %s \n", url);
-
+	switch(urlT)
+	{
+		case curlJstatus:
+	  		sprintf(url, "https://%s/cgi-jstatus-*", asn);
+			break;
+		case curlJday:
+	  		sprintf(url, "https://%s/cgi-jday-Z%s-%d-%d-%d", asn, serno, tm.tm_year + 1900, tm.tm_mon +1, tm.tm_mday);
+			break;
+	}
+	printf("makeURL: %s \n", url);
 	return url;
 }
 
@@ -60,7 +69,7 @@ void curl2()
 		curl_easy_setopt(curl, CURLOPT_USERNAME, username);
 		curl_easy_setopt(curl, CURLOPT_PASSWORD, password);
 		curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
-		curl_easy_setopt(curl, CURLOPT_URL, makeURL());
+		curl_easy_setopt(curl, CURLOPT_URL, makeURL(curlJday));
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_print);
 
 		if (outfile2)
@@ -163,7 +172,7 @@ int main(int argc, char **argv)
 
 	config_t cfg;
 	config_setting_t *root, *setting;
-	config_setting_t *zappi_g, *z_user, *z_pwd;
+	config_setting_t *zappi_g, *z_user, *z_pwd, *z_asn;
 	config_setting_t *database_g, *db_host, *db_db, *db_pwd, *db_user;
 
 	CURL* curl;
@@ -192,9 +201,10 @@ int main(int argc, char **argv)
 
 	z_user = config_setting_get_member(zappi_g, "username");
 	username = config_setting_get_string(z_user);
-
 	z_pwd = config_setting_get_member(zappi_g, "password");
 	password = config_setting_get_string(z_pwd);
+	z_asn = config_setting_get_member(zappi_g, "asn");
+	asn = config_setting_get_string(z_asn);
 
 	database_g = config_setting_get_member(root, "Database");
 
@@ -213,7 +223,7 @@ int main(int argc, char **argv)
 		curl_easy_setopt(curl, CURLOPT_USERNAME, username);
 		curl_easy_setopt(curl, CURLOPT_PASSWORD, password);
 		curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
-		curl_easy_setopt(curl, CURLOPT_URL, "https://s6.myenergi.net/cgi-jstatus-*");
+		curl_easy_setopt(curl, CURLOPT_URL, makeURL(curlJstatus));
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_print);
 
 		if (outfile1)

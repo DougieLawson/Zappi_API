@@ -1,5 +1,5 @@
 /* 
- Copyright © Dougie Lawson, 2020, All rights reserved 
+ Copyright © Dougie Lawson, 2020-2021, All rights reserved 
 */
 
 #include <stdio.h>
@@ -40,7 +40,7 @@ char* ectt_5;
 char* ectt_6;
 int cts[6];
 
-enum { unknown, min, hr, dow, dom, mon, yr, imp, expd, gen, gep, h1d, h1b, v1, frq, pect1, nect1, pect2, nect2, pect3, nect3, sno, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, dat, tim, ectp2, ectp3, ectp4, grd, pha, sta, vol, pri, cmt, zmo, tbk, che, pst, mgl, sbh, sbk, fwv, dst, lck, asn, };
+enum { unknown, min, hr, dow, dom, mon, yr, imp, expd, gen, gep, h1d, h1b, v1, frq, pect1, nect1, pect2, nect2, pect3, nect3, sno, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, dat, tim, ectp2, ectp3, ectp4, grd, pha, sta, vol, pri, cmt, zmo, tbk, che, pst, mgl, sbh, sbk, fwv, dst, lck, asn, bst, };
 char* none_str = "None";
 
 float watts(int zValue)
@@ -123,6 +123,7 @@ int lexer(const char *s)
 		{ "dst", dst },
 		{ "lck", lck },
 		{ "asn", asn },
+		{ "bst", bst },
 	};
 	struct entry_s *p = token_table;
 	for(; p->key != NULL && strcmp(p->key, s) != 0; ++p);
@@ -286,6 +287,8 @@ json_object* decode_json(json_object* jObj)
 		case lck:
 			break;
 		case asn:
+			break;
+		case bst:
 			break;
 
 	}

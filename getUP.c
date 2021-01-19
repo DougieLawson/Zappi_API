@@ -1,5 +1,5 @@
 /* 
- Copyright © Dougie Lawson, 2020, All rights reserved 
+ Copyright © Dougie Lawson, 2020-2021, All rights reserved 
 */
 
 #include <stdio.h>     /* for printf */
@@ -7,11 +7,140 @@
 #include <string.h>
 #include <getopt.h>
 #include <libconfig.h>
+#include <curl/curl.h>
 #include <sys/stat.h>
+#include <pcre.h>
+
 #define CONFIG_FILE "/home/pi_d/.zappi.cfg"
+#define MYENERGI_URL "https://director.myenergi.net"
 
 #define FALSE 0
 #define TRUE !(FALSE)
+
+const char* matchedString;
+int offsetVector[30];
+
+int findMy(void* testString)
+{
+	char* regexPattern;
+	pcre* regexComp;
+	pcre_extra* regExtra;
+	int regexErrorCode;
+	int regexErrorOffset;
+	const char* regexErrorStr;
+	int j;
+
+	regexPattern = "x_myenergi-asn: (.*.myenergi.net)";
+	regexComp = pcre_compile(regexPattern, PCRE_CASELESS, &regexErrorStr, &regexErrorOffset, NULL);
+	if (regexComp == NULL) 
+	{
+		printf("Error: %s %s\n", regexPattern, regexErrorStr);
+		exit(1);
+	}
+
+	regExtra = pcre_study(regexComp, 0, &regexErrorStr);
+	if (regexErrorStr != NULL)
+	{
+		printf("Study: %s %s\n", regexPattern, regexErrorStr);
+		exit(1);
+	}
+	regexErrorCode = pcre_exec(regexComp, regExtra, testString,
+		strlen(testString), 0, 0, offsetVector, 30);
+	if (regexErrorCode > 0)
+	{
+		pcre_get_substring(testString, offsetVector, regexErrorCode, 1, &(matchedString));
+	}
+	else if (regexErrorCode < 0)
+	{
+		switch(regexErrorCode)
+		{
+			case PCRE_ERROR_NOMATCH : 
+				//printf("No match\n"); 
+				break;
+			case PCRE_ERROR_NULL : 
+				printf("Null\n"); 
+				break;
+			case PCRE_ERROR_BADOPTION : 
+				printf("Bad option\n"); 
+				break;
+			case PCRE_ERROR_BADMAGIC : 
+				printf("Voodoo\n"); 
+				break;
+			case PCRE_ERROR_UNKNOWN_NODE : 
+				printf("Something kooky\n"); 
+				break;
+			case PCRE_ERROR_NOMEMORY : 
+				printf("Oom\n"); 
+				break;
+			default : printf("Very bad\n"); break;
+		}
+	}
+	else
+	{
+		printf("No error, but no match");
+	}
+	pcre_free(regexComp);
+	if (regExtra != NULL)
+	{
+		pcre_free_study(regExtra);
+	}
+	return 0;
+}
+
+static size_t curl_print(void* ptr, size_t size, size_t nmemb, void* stream)
+{
+	size_t written =  fwrite(ptr, size, nmemb, (FILE*)stream);
+	//size_t realsize = size * nmemb;
+	return written; 
+}
+
+static size_t curl_header(void* ptr, size_t size, size_t nitems, void* userdata)
+{
+	findMy(ptr);
+	return nitems * size;
+}
+
+void getASN(config_setting_t* z_user, config_setting_t* z_pwd)
+{
+	CURL* curl;
+	CURLcode res;
+	static const char *outfilenm = "/tmp/curl.out";
+	const char* username;
+	const char* password;
+	FILE* outfile;
+
+	username = config_setting_get_string(z_user);
+	password = config_setting_get_string(z_pwd);
+
+	curl_global_init(CURL_GLOBAL_ALL);
+ 
+	curl = curl_easy_init();
+	if(curl) {
+
+		curl_easy_setopt(curl, CURLOPT_USERNAME, username);
+		curl_easy_setopt(curl, CURLOPT_PASSWORD, password);
+		curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
+		curl_easy_setopt(curl, CURLOPT_HEADER, 1);
+		curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, curl_header);
+		curl_easy_setopt(curl, CURLOPT_URL, MYENERGI_URL);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_print);
+
+		outfile = fopen(outfilenm, "wb");
+		if (outfile) {
+			curl_easy_setopt(curl, CURLOPT_WRITEDATA, outfile);
+
+    			res = curl_easy_perform(curl);
+   		 	if(res != CURLE_OK)
+				fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+			fclose(outfile);
+		}
+	curl_easy_cleanup(curl);
+	}
+ 
+	curl_global_cleanup();
+ 
+	printf("Match: (%2d, %2d): %s\n", offsetVector[2], offsetVector[3], matchedString);
+}
 
 int main(int argc, char **argv)
 {
@@ -21,7 +150,7 @@ int main(int argc, char **argv)
 	mode_t mode;
 	config_t cfg;
 	config_setting_t *root, *setting;
-	config_setting_t *zappi, *z_user, *z_pwd;
+	config_setting_t *zappi, *z_user, *z_pwd, *z_asn;
 	config_setting_t *database, *d_host, *d_db, *d_pwd, *d_user;
 	config_init(&cfg);
 	root = config_root_setting(&cfg);
@@ -130,6 +259,9 @@ int main(int argc, char **argv)
 		fprintf(stderr, "\n");
 		exit(20);
 	}
+	getASN(z_user, z_pwd);
+	z_asn = config_setting_add(zappi, "asn", CONFIG_TYPE_STRING);
+	config_setting_set_string(z_asn, matchedString);
 	if(! config_write_file(&cfg, output_file))
 	{
 		fprintf(stderr, "Error while writing file.\n");
