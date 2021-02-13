@@ -45,7 +45,6 @@ char* makeURL (enum URLtype urlT)
 	  		sprintf(url, "https://%s/cgi-jday-Z%s-%d-%d-%d", asn, serno, tm.tm_year + 1900, tm.tm_mon +1, tm.tm_mday);
 			break;
 	}
-	printf("makeURL: %s \n", url);
 	return url;
 }
 
@@ -116,23 +115,17 @@ int main(int argc, char **argv)
 		switch (c)
 		{
 			case 0:
-	//			printf("option --%s", long_options[option_index].name);
-	//			if (optarg) printf(" with value %s ", optarg);
-
 				if (option_index == 0 || option_index == 3)
 				{
 					s = strptime(optarg, "%Y/%m/%d", &tm);
-	//				printf("idx: %d opt: %s %s ",option_index, long_options[option_index].name, optarg);
 				}
 				else if (option_index == 1 || option_index == 4)
 				{
 					s = strptime(optarg, "%d/%m/%Y", &tm);
-	//				printf("idx: %d opt: %s %s ",option_index, long_options[option_index].name, optarg);
 				}
 				else if (option_index == 2 || option_index == 5)
 				{
 					s = strptime(optarg, "%m/%d/%Y", &tm);
-	//				printf("idx: %d opt: %s %s ",option_index, long_options[option_index].name, optarg);
 				}
 				else if (option_index == 6)
 				{
@@ -146,15 +139,12 @@ int main(int argc, char **argv)
 				printf("\n");
 				break;
 			case 'i':
-	//			printf("option -i with value '%s'\n", optarg);
 				s = strptime(optarg, "%Y/%m/%d", &tm);
 				break;
 			case 'e':
-	//			printf("option -e with value '%s'\n", optarg);
 				s = strptime(optarg, "%d/%m/%Y", &tm);
 				break;
 			case 'a':
-	//			printf("option -a with value '%s'\n", optarg);
 				s = strptime(optarg, "%m/%d/%Y", &tm);
 				break;
 			case 'n':
@@ -177,7 +167,6 @@ int main(int argc, char **argv)
 
 	CURL* curl;
 	CURLcode res;
-
 
 	memset(nameBuff1,0,sizeof(nameBuff1));
 	strncpy(nameBuff1, "/tmp/parseZFil1-XXXXXX",23);

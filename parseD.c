@@ -86,9 +86,6 @@ void sql_insert()
 		exit_on_error("Invalid param count", con);
 	} 
 
-	//printf("%04d-%02d-%02d %02d:%02d ", year, month, day_of_month, hour, minute); 
-	//printf("%s imp: %4.1f exp: %4.1f gen+: %4.1f gen-: %4.1f zappi imp: %4.1f zappi div: %4.1f voltage: %3.1f freq: %2.2f pect1: %4.1f nect1: %4.1f pect2: %4.1f nect2: %4.1f pect3: %4.1f nect3: %4.1f ctSums: %4.1f\n", day_of_week, watts(import), watts(exported), watts(genplus), watts(genminus), watts(zappiimp), watts(zappidiv), (float)voltage/10.0, (float)frequency/100.0, watts(pect_1), watts(nect_1), watts(pect_2), watts(nect_2), watts(pect_3), watts(nect_3), ctSums(import, exported, pect_1, pect_2, pect_3, nect_1, nect_2, nect_3)); 
-
 	memset(bind, 0, sizeof(bind));
 
 	struct tm tm;
