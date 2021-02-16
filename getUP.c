@@ -155,6 +155,12 @@ int main(int argc, char **argv)
 	config_init(&cfg);
 	root = config_root_setting(&cfg);
 	_Bool u_OK, p_OK, h_OK, d_OK, q_OK, s_OK;
+	u_OK = FALSE;
+	p_OK = FALSE;
+	h_OK = FALSE;
+	d_OK = FALSE;
+	q_OK = FALSE;
+	s_OK = FALSE;
 
 	zappi = config_setting_add(root, "Zappi", CONFIG_TYPE_GROUP);
 	database = config_setting_add(root, "Database", CONFIG_TYPE_GROUP);
@@ -250,18 +256,26 @@ int main(int argc, char **argv)
 	if (u_OK == FALSE || p_OK == FALSE || h_OK == FALSE || d_OK == FALSE || q_OK == FALSE || s_OK == FALSE)
 	{
 		fprintf(stderr, "Missing option(s): ");
-		if (u_OK == FALSE) fprintf(stderr, "Zappi userid. Use: -uXXX or --username XXX ");
-		if (p_OK == FALSE) fprintf(stderr, "Zappi password. Use:  -pXXX or --password XXX ");
-		if (h_OK == FALSE) fprintf(stderr, "Mariadb hostname or IP address. Use: -h192.168.3.14  or --sqlhost raspberrypi.local ");
-		if (d_OK == FALSE) fprintf(stderr, "Mariadb database name. Use: -dXXX or --sqldbase XXX ");
-		if (q_OK == FALSE) fprintf(stderr, "Mariadb password. Use: -qXXX or --sqlpwd XXX ");
-		if (s_OK == FALSE) fprintf(stderr, "Mariadb userid. Use -sXXXX or --sqluser XXX ");
+		if (u_OK == FALSE) fprintf(stderr, "\nZappi userid. Use: -uXXX or --username XXX ");
+		if (p_OK == FALSE) fprintf(stderr, "\nZappi password. Use:  -pXXX or --password XXX ");
+		if (h_OK == FALSE) fprintf(stderr, "\nMariadb hostname or IP address. Use: -h192.168.3.14  or --sqlhost raspberrypi.local ");
+		if (d_OK == FALSE) fprintf(stderr, "\nMariadb database name. Use: -dXXX or --sqldbase XXX ");
+		if (q_OK == FALSE) fprintf(stderr, "\nMariadb password. Use: -qXXX or --sqlpwd XXX ");
+		if (s_OK == FALSE) fprintf(stderr, "\nMariadb userid. Use -sXXXX or --sqluser XXX ");
 		fprintf(stderr, "\n");
 		exit(20);
 	}
-	getASN(z_user, z_pwd);
-	z_asn = config_setting_add(zappi, "asn", CONFIG_TYPE_STRING);
-	config_setting_set_string(z_asn, matchedString);
+	if (u_OK == TRUE && p_OK == TRUE)
+	{
+		getASN(z_user, z_pwd);
+		z_asn = config_setting_add(zappi, "asn", CONFIG_TYPE_STRING);
+		config_setting_set_string(z_asn, matchedString);
+	}
+	else 
+	{
+		fprintf(stderr, "\nMissing Myenergi credentials");
+		exit(20);
+	}
 	if(! config_write_file(&cfg, output_file))
 	{
 		fprintf(stderr, "Error while writing file.\n");
