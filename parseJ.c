@@ -11,6 +11,7 @@
 #include <math.h>
 
 char* current_key;
+char* unk_string;
 int minute;
 int hour;
 char* day_of_week;
@@ -40,7 +41,8 @@ char* ectt_5;
 char* ectt_6;
 int cts[6];
 
-enum { unknown, min, hr, dow, dom, mon, yr, imp, expd, gen, gep, h1d, h1b, v1, frq, pect1, nect1, pect2, nect2, pect3, nect3, sno, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, dat, tim, ectp2, ectp3, ectp4, grd, pha, sta, vol, pri, cmt, zmo, tbk, che, pst, mgl, sbh, sbk, fwv, dst, lck, asn, bst, divi, ectp1, };
+enum { unknown, asn, bst, che, cmt, dat, divi, dom, dow, dst, ectp1, ectp2, ectp3, ectp4, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, eddi, expd, frq, fwv, gen, gep, grd, h1b, h1d, harvi, hr, imp, lck, mgl, min, mon, nect1, nect2, nect3, pect1, pect2, pect3, pha, pri, pst, pwm, rac, rrac, sbh, sbk, sno, sta, tbk, tim, v1, vol, yr, zappi, zmo, zs,  zsh, };
+
 char* none_str = "None";
 
 float watts(int zValue)
@@ -74,58 +76,66 @@ int lexer(const char *s)
 	}
 	token_table[] =
 	{
-		{ "min", min },
-		{ "hr", hr },
-		{ "dow", dow },
+		{ "asn", asn },
+		{ "bst", bst },
+		{ "che", che },
+		{ "cmt", cmt },
+		{ "dat", dat },
+		{ "div", divi },
 		{ "dom", dom },
-		{ "mon", mon },
-		{ "yr", yr },
-		{ "imp", imp },
-		{ "exp", expd },
-		{ "gen", gen },
-		{ "gep", gep },
-		{ "h1d", h1d },
-		{ "h1b", h1b },
-		{ "v1", v1 },
-		{ "frq", frq },
-		{ "pect1", pect1 },
-		{ "nect1", nect1 },
-		{ "pect2", pect2 },
-		{ "nect2", nect2 },
-		{ "pect3", pect3 },
-		{ "nect3", nect3 },
-		{ "sno", sno },
+		{ "dow", dow },
+		{ "dst", dst },
+		{ "ectp1", ectp1 },
+		{ "ectp2", ectp2 },
+		{ "ectp3", ectp3 },
+		{ "ectp4", ectp4 },
 		{ "ectt1", ectt1 },
 		{ "ectt2", ectt2 },
 		{ "ectt3", ectt3 },
 		{ "ectt4", ectt4 },
 		{ "ectt5", ectt5 },
 		{ "ectt6", ectt6 },
-		{ "dat", dat },
-		{ "tim", tim },
-		{ "ectp2", ectp2 },
-		{ "ectp3", ectp3 },
-		{ "ectp4", ectp4 },
+		{ "eddi", eddi },
+		{ "exp", expd },
+		{ "frq", frq },
+		{ "fwv", fwv },
+		{ "gen", gen },
+		{ "gep", gep },
 		{ "grd", grd },
-		{ "pha", pha },
-		{ "sta", sta },
-		{ "vol", vol },
-		{ "pri", pri },
-		{ "cmt", cmt },
-		{ "zmo", zmo },
-		{ "tbk", tbk },
-		{ "che", che },
-		{ "pst", pst },
+		{ "harvi", harvi },
+		{ "h1b", h1b },
+		{ "h1d", h1d },
+		{ "hr", hr },
+		{ "imp", imp },
+		{ "lck", lck },
 		{ "mgl", mgl },
+		{ "min", min },
+		{ "mon", mon },
+		{ "nect1", nect1 },
+		{ "nect2", nect2 },
+		{ "nect3", nect3 },
+		{ "pect1", pect1 },
+		{ "pect2", pect2 },
+		{ "pect3", pect3 },
+		{ "pha", pha },
+		{ "pri", pri },
+		{ "pst", pst },
+		{ "pwm", pwm },
+		{ "rac", rac },
+		{ "rrac", rrac },
 		{ "sbh", sbh },
 		{ "sbk", sbk },
-		{ "fwv", fwv },
-		{ "dst", dst },
-		{ "lck", lck },
-		{ "asn", asn },
-		{ "bst", bst },
-		{ "div", divi },
-		{ "ectp1", ectp1 },
+		{ "sno", sno },
+		{ "sta", sta },
+		{ "tbk", tbk },
+		{ "tim", tim },
+		{ "v1", v1 },
+		{ "vol", vol },
+		{ "yr", yr },
+		{ "zappi", zappi },
+		{ "zmo", zmo },
+		{ "zs", zs },
+		{ "zsh", zsh },
 	};
 	struct entry_s *p = token_table;
 	for(; p->key != NULL && strcmp(p->key, s) != 0; ++p);
@@ -146,29 +156,47 @@ json_object* decode_json(json_object* jObj)
 			break;
 	}
 	switch(lexer(current_key)) {
-		case min:
-			minute = json_object_get_int(jObj);
-			break;
-		case hr:
-			hour = json_object_get_int(jObj);
+		case dom:
+			day_of_month = json_object_get_int(jObj);
 			break;
 		case dow:
 			day_of_week = strdup(json_object_get_string(jObj));
 			break;
-		case dom:
-			day_of_month = json_object_get_int(jObj);
+		case ectt1:
+			ectt_1 = strdup(json_object_get_string(jObj));
+			cts[1] = strcmp(ectt_1, none_str);
+			//printf("ectt_1 %s cts[1] %d ", ectt_1, cts[1]);
 			break;
-		case mon:
-			month = json_object_get_int(jObj);
+		case ectt2:
+			ectt_2 = strdup(json_object_get_string(jObj));
+			cts[2] = strcmp(ectt_2, none_str);
+			//printf("ectt_2 %s cts[2] %d ", ectt_2, cts[2]);
 			break;
-		case yr:
-			year = json_object_get_int(jObj);
+		case ectt3:
+			ectt_3 = strdup(json_object_get_string(jObj));
+			cts[3] = strcmp(ectt_3, none_str);
+			//printf("ectt_3 %s cts[3] %d ", ectt_3, cts[3]);
 			break;
-		case imp:
-			import = json_object_get_int(jObj);
+		case ectt4:
+			ectt_4 = strdup(json_object_get_string(jObj));
+			cts[4] = strcmp(ectt_4, none_str);
+			//printf("ectt_4 %s cts[4] %d ", ectt_4, cts[4]);
+			break;
+		case ectt5:
+			ectt_5 = strdup(json_object_get_string(jObj));
+			cts[5] = strcmp(ectt_5, none_str);
+			//printf("ectt_5 %s cts[5] %d ", ectt_5, cts[5]);
+			break;
+		case ectt6:
+			ectt_6 = strdup(json_object_get_string(jObj));
+			cts[6] = strcmp(ectt_6, none_str);
+			//printf("ectt_6 %s cts[6] %d\n", ectt_6, cts[6]);
 			break;
 		case expd:
 			exported = json_object_get_int(jObj);
+			break;
+		case frq:
+			frequency = json_object_get_int(jObj);
 			break;
 		case gen:
 			genminus = json_object_get_int(jObj);
@@ -176,79 +204,68 @@ json_object* decode_json(json_object* jObj)
 		case gep:
 			genplus = json_object_get_int(jObj);
 			break;
-		case h1d:
-			zappidiv = json_object_get_int(jObj);
-			break;
 		case h1b:
 			zappiimp = json_object_get_int(jObj);
 			break;
-		case v1:
-			voltage = json_object_get_int(jObj);
+		case h1d:
+			zappidiv = json_object_get_int(jObj);
 			break;
-		case frq:
-			frequency = json_object_get_int(jObj);
+		case hr:
+			hour = json_object_get_int(jObj);
 			break;
-		case pect1:
-			pect_1 = json_object_get_int(jObj);
+		case imp:
+			import = json_object_get_int(jObj);
+			break;
+		case min:
+			minute = json_object_get_int(jObj);
+			break;
+		case mon:
+			month = json_object_get_int(jObj);
 			break;
 		case nect1:
 			nect_1 = json_object_get_int(jObj);
 			break;
-		case pect2:
-			pect_2 = json_object_get_int(jObj);
-			break;
 		case nect2:
 			nect_2 = json_object_get_int(jObj);
 			break;
-		case pect3:
-			pect_3 = json_object_get_int(jObj);
-			break;
 		case nect3:
 			nect_3 = json_object_get_int(jObj);
+			break;
+		case pect1:
+			pect_1 = json_object_get_int(jObj);
+			break;
+		case pect2:
+			pect_2 = json_object_get_int(jObj);
+			break;
+		case pect3:
+			pect_3 = json_object_get_int(jObj);
 			break;
 		case sno:
 			serno = strdup(json_object_get_string(jObj));
 			//printf("SNO: %s\n", serno);
 			curl2();
 			break;
-		case ectt1:
-			ectt_1 = strdup(json_object_get_string(jObj));
-			cts[1] = strcmp(ectt_1, none_str);
-			//printf("ectt_1 %s cts[1] %d ", ectt_1, cts[1]);
+		case v1:
+			voltage = json_object_get_int(jObj);
 			break;
-	
-		case ectt2:
-			ectt_2 = strdup(json_object_get_string(jObj));
-			cts[2] = strcmp(ectt_2, none_str);
-			//printf("ectt_2 %s cts[2] %d ", ectt_2, cts[2]);
+		case yr:
+			year = json_object_get_int(jObj);
 			break;
-	
-		case ectt3:
-			ectt_3 = strdup(json_object_get_string(jObj));
-			cts[3] = strcmp(ectt_3, none_str);
-			//printf("ectt_3 %s cts[3] %d ", ectt_3, cts[3]);
+		case asn:
 			break;
-	
-		case ectt4:
-			ectt_4 = strdup(json_object_get_string(jObj));
-			cts[4] = strcmp(ectt_4, none_str);
-			//printf("ectt_4 %s cts[4] %d ", ectt_4, cts[4]);
+		case bst:
 			break;
-	
-		case ectt5:
-			ectt_5 = strdup(json_object_get_string(jObj));
-			cts[5] = strcmp(ectt_5, none_str);
-			//printf("ectt_5 %s cts[5] %d ", ectt_5, cts[5]);
+		case che:
 			break;
-	
-		case ectt6:
-			ectt_6 = strdup(json_object_get_string(jObj));
-			cts[6] = strcmp(ectt_6, none_str);
-			//printf("ectt_6 %s cts[6] %d\n", ectt_6, cts[6]);
+		case cmt:
 			break;
 		case dat:
 			break;
-		case tim:
+		case divi:
+			break;
+		case dst:
+			break;
+		case ectp1:
 			break;
 		case ectp2:
 			break;
@@ -256,46 +273,49 @@ json_object* decode_json(json_object* jObj)
 			break;
 		case ectp4:
 			break;
+		case fwv:
+			break;
 		case grd:
+			break;
+		case lck:
+			break;
+		case mgl:
 			break;
 		case pha:
 			break;
-		case sta:
-			break;
-		case vol:
-			break;
 		case pri:
 			break;
-		case cmt:
-			break;
-		case zmo:
-			break;
-		case tbk:
-			break;
-		case che:
+		case pwm:
 			break;
 		case pst:
 			break;
-		case mgl:
+		case rac:
+			break;
+		case rrac:
 			break;
 		case sbh:
 			break;
 		case sbk:
 			break;
-		case fwv:
+		case sta:
 			break;
-		case dst:
+		case tbk:
 			break;
-		case lck:
+		case tim:
 			break;
-		case asn:
+		case vol:
 			break;
-		case bst:
+		case zmo:
 			break;
-		case divi:
+		case zs:
 			break;
-		case ectp1:
+		case zsh:
 			break;
+		case unknown:
+		default:
+			unk_string = strdup(json_object_get_string(jObj));
+			printf("Key: %s", current_key);
+			printf("String: %s\n", unk_string);
 
 	}
 	return analyse_result;
