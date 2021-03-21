@@ -11,6 +11,7 @@
 #include <math.h>
 
 char* current_key;
+char* curTime;
 char* unk_string;
 int minute;
 int hour;
@@ -40,8 +41,10 @@ char* ectt_4;
 char* ectt_5;
 char* ectt_6;
 int cts[6];
+int statusCode;
+char* statusText;
 
-enum { unknown, asn, bst, che, cmt, dat, divi, dom, dow, dst, ectp1, ectp2, ectp3, ectp4, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, eddi, expd, frq, fwv, gen, gep, grd, h1b, h1d, harvi, hr, imp, lck, mgl, min, mon, nect1, nect2, nect3, pect1, pect2, pect3, pha, pri, pst, pwm, rac, rdc, rrac, sbh, sbk, sno, sta, tbk, tim, v1, vol, yr, zappi, zmo, zs,  zsh, };
+enum { unknown, asn, bst, che, cmt, dat, divi, dom, dow, dst, ectp1, ectp2, ectp3, ectp4, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, eddi, expd, frq, fwv, gen, gep, grd, h1b, h1d, harvi, hr, imp, lck, mgl, min, mon, nect1, nect2, nect3, pect1, pect2, pect3, pha, pri, pst, pwm, rac, rdc, rrac, sbh, sbk, sno, sta, status, statustext, tbk, tim, v1, vol, yr, zappi, zmo, zs,  zsh, };
 
 char* none_str = "None";
 
@@ -128,6 +131,8 @@ int lexer(const char *s)
 		{ "sbk", sbk },
 		{ "sno", sno },
 		{ "sta", sta },
+		{ "status", status },
+		{ "statustext", statustext },
 		{ "tbk", tbk },
 		{ "tim", tim },
 		{ "v1", v1 },
@@ -246,6 +251,17 @@ json_object* decode_json(json_object* jObj)
 			//printf("SNO: %s\n", serno);
 			curl2();
 			break;
+		case status:
+			statusCode = json_object_get_int(jObj);
+			break;
+		case statustext:
+			statusText = strdup(json_object_get_string(jObj));
+			fprintf(stderr, "Error: %d %s\n", statusCode, statusText);
+			exit(statusCode);
+			break;
+		case tim:
+			curTime = strdup(json_object_get_string(jObj));
+			break;
 		case v1:
 			voltage = json_object_get_int(jObj);
 			break;
@@ -303,8 +319,6 @@ json_object* decode_json(json_object* jObj)
 		case sta:
 			break;
 		case tbk:
-			break;
-		case tim:
 			break;
 		case vol:
 			break;

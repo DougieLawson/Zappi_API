@@ -32,17 +32,30 @@ struct tm tm;
 enum URLtype{curlJstatus, curlJday};
 
 json_object* statusz;
+int no_delay = FALSE;
 
 char* makeURL (enum URLtype urlT)
 {
-	char* url = malloc(55);
+	char* url = malloc(65);
+	char* s;
+	struct tm ctm;
+	int dur;
+	if (curTime != NULL && no_delay == FALSE)
+	{
+		if (ctm.tm_hour > 2)
+		{
+			ctm.tm_hour -= 2;
+		}
+		printf("%d-%d-%d\n", ctm.tm_hour, ctm.tm_min, dur);
+	}
+	dur = (24 - ctm.tm_hour) * 60;
 	switch(urlT)
 	{
 		case curlJstatus:
 	  		sprintf(url, "https://%s/cgi-jstatus-*", asn);
 			break;
 		case curlJday:
-	  		sprintf(url, "https://%s/cgi-jday-Z%s-%d-%d-%d", asn, serno, tm.tm_year + 1900, tm.tm_mon +1, tm.tm_mday);
+	  		sprintf(url, "https://%s/cgi-jday-Z%s-%d-%d-%d-%d-%d-%d", asn, serno, tm.tm_year + 1900, tm.tm_mon +1, tm.tm_mday, ctm.tm_hour, ctm.tm_min, dur);
 			break;
 	}
 	return url;
@@ -91,7 +104,6 @@ void curl2()
 int main(int argc, char **argv)
 {
 	int c;
-	int no_delay = FALSE;
 	char *s;
 	t = time(NULL);
 	s = (char*)TRUE;
