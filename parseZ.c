@@ -47,8 +47,13 @@ char* makeURL (enum URLtype urlT)
 			ctm.tm_hour -= 2;
 		}
 		printf("%d-%d-%d\n", ctm.tm_hour, ctm.tm_min, dur);
+		dur = (24 - ctm.tm_hour) * 60;
 	}
-	dur = (24 - ctm.tm_hour) * 60;
+	else {
+		ctm.tm_hour = 0;
+		ctm.tm_min = 0;
+		dur = 1440;
+	}
 	switch(urlT)
 	{
 		case curlJstatus:
