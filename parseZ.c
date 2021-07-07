@@ -46,7 +46,6 @@ char* makeURL (enum URLtype urlT)
 		{
 			ctm.tm_hour -= 2;
 		}
-		printf("%d-%d-%d\n", ctm.tm_hour, ctm.tm_min, dur);
 		dur = (24 - ctm.tm_hour) * 60;
 	}
 	else {
