@@ -370,7 +370,10 @@ json_object* json_parse_array(json_object* jObj, int key)
 			{
 				idx = 0;
 				json_object_parse(jvalue);
-				json_object_put(jvalue);
+				if (jvalue != NULL) 
+				{
+					json_object_put(jvalue);
+				}
 			}
 		}
 	}
