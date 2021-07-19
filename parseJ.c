@@ -44,7 +44,7 @@ int cts[6];
 int statusCode;
 char* statusText;
 
-enum { unknown, asn, bst, che, cmt, dat, divi, dom, dow, dst, ectp1, ectp2, ectp3, ectp4, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, eddi, expd, frq, fwv, gen, gep, grd, h1b, h1d, harvi, hr, imp, lck, mgl, min, mon, nect1, nect2, nect3, pect1, pect2, pect3, pha, pri, pst, pwm, rac, rdc, rrac, sbh, sbk, sno, sta, status, statustext, tbk, tim, v1, vol, yr, zappi, zmo, zs,  zsh, zsl };
+enum { unknown, asn, bsm, bss, bst, che, cmt, dat, divi, dom, dow, dst, ectp1, ectp2, ectp3, ectp4, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, eddi, expd, frq, fwv, gen, gep, grd, h1b, h1d, harvi, hr, imp, lck, mgl, min, mon, nect1, nect2, nect3, pect1, pect2, pect3, pha, pri, pst, pwm, rac, rdc, rrac, sbh, sbk, sno, sta, status, statustext, tbk, tim, tz, v1, vol, yr, zappi, zmo, zs,  zsh, zsl };
 
 char* none_str = "None";
 
@@ -80,6 +80,8 @@ int lexer(const char *s)
 	token_table[] =
 	{
 		{ "asn", asn },
+		{ "bsm", bsm },
+		{ "bss", bss },
 		{ "bst", bst },
 		{ "che", che },
 		{ "cmt", cmt },
@@ -135,6 +137,7 @@ int lexer(const char *s)
 		{ "statustext", statustext },
 		{ "tbk", tbk },
 		{ "tim", tim },
+		{ "tz", tz },
 		{ "v1", v1 },
 		{ "vol", vol },
 		{ "yr", yr },
@@ -271,6 +274,10 @@ json_object* decode_json(json_object* jObj)
 			break;
 		case asn:
 			break;
+		case bsm:
+			break;
+		case bss:
+			break;
 		case bst:
 			break;
 		case che:
@@ -320,6 +327,8 @@ json_object* decode_json(json_object* jObj)
 		case sta:
 			break;
 		case tbk:
+			break;
+		case tz:
 			break;
 		case vol:
 			break;
