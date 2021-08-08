@@ -267,6 +267,8 @@ int main(int argc, char **argv)
 	}
 	if (u_OK == TRUE && p_OK == TRUE)
 	{
+		z_user = config_setting_get_member(zappi, "username");
+		z_pwd = config_setting_get_member(zappi, "password");
 		getASN(z_user, z_pwd);
 		z_asn = config_setting_add(zappi, "asn", CONFIG_TYPE_STRING);
 		config_setting_set_string(z_asn, matchedString);
