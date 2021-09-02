@@ -150,17 +150,18 @@ int main(int argc, char **argv)
 	mode_t mode;
 	config_t cfg;
 	config_setting_t *root, *setting;
-	config_setting_t *zappi, *z_user, *z_pwd, *z_asn;
+	config_setting_t *zappi, *z_user, *z_pwd, *z_asn, *z_serial;
 	config_setting_t *database, *d_host, *d_db, *d_pwd, *d_user;
 	config_init(&cfg);
 	root = config_root_setting(&cfg);
-	_Bool u_OK, p_OK, h_OK, d_OK, q_OK, s_OK;
+	_Bool u_OK, p_OK, h_OK, d_OK, q_OK, s_OK, z_OK;
 	u_OK = FALSE;
 	p_OK = FALSE;
 	h_OK = FALSE;
 	d_OK = FALSE;
 	q_OK = FALSE;
 	s_OK = FALSE;
+	z_OK = FALSE;
 
 	zappi = config_setting_add(root, "Zappi", CONFIG_TYPE_GROUP);
 	database = config_setting_add(root, "Database", CONFIG_TYPE_GROUP);
@@ -176,9 +177,10 @@ int main(int argc, char **argv)
 			{"sqlpwd", required_argument, 0,  0 },
 			{"sqlhost", required_argument, 0,  0 },
 			{"sqldbase", required_argument, 0,  0 },
+			{"zappi", required_argument, 0,  0 },
 			{0,          0,                 0,  0 }
 		};
-		c = getopt_long(argc, argv, "u:p:h:d:q:s:", long_options, &option_index);
+		c = getopt_long(argc, argv, "u:p:h:d:q:s:z:", long_options, &option_index);
 		if (c == -1) break;
 		switch (c)
 		{
@@ -191,9 +193,10 @@ int main(int argc, char **argv)
 				else if (!strcmp(long_options[option_index].name, "sqlhost")) h_OK = TRUE;
 				else if (!strcmp(long_options[option_index].name, "sqldbase")) d_OK = TRUE;
 				else if (!strcmp(long_options[option_index].name, "sqlpwd")) q_OK = TRUE;
+				else if (!strcmp(long_options[option_index].name, "zappi")) z_OK = TRUE;
 
 				if (optarg) printf(" with value %s", optarg);
-				if (option_index == 0 || option_index == 1)
+				if (option_index == 0 || option_index == 1 || option_index == 6)
 				{
 					setting = config_setting_add(zappi, long_options[option_index].name, CONFIG_TYPE_STRING);
 				}
@@ -240,6 +243,13 @@ int main(int argc, char **argv)
 				config_setting_set_string(d_user, optarg);
 				s_OK = TRUE;
 				break;
+			case 'z':
+				printf("option -z with value '%s'\n", optarg);
+				z_serial = config_setting_add(zappi, "zappi", CONFIG_TYPE_STRING);
+				config_setting_set_string(z_serial, optarg);
+				z_OK = TRUE;
+				break;
+
 			case '?':
 				break;
 			default:
@@ -253,7 +263,7 @@ int main(int argc, char **argv)
 		printf("%s ", argv[optind++]);
 		printf("\n");
 	}
-	if (u_OK == FALSE || p_OK == FALSE || h_OK == FALSE || d_OK == FALSE || q_OK == FALSE || s_OK == FALSE)
+	if (u_OK == FALSE || p_OK == FALSE || h_OK == FALSE || d_OK == FALSE || q_OK == FALSE || s_OK == FALSE || z_OK == FALSE)
 	{
 		fprintf(stderr, "Missing option(s): ");
 		if (u_OK == FALSE) fprintf(stderr, "\nZappi userid. Use: -uXXX or --username XXX ");
@@ -262,6 +272,7 @@ int main(int argc, char **argv)
 		if (d_OK == FALSE) fprintf(stderr, "\nMariadb database name. Use: -dXXX or --sqldbase XXX ");
 		if (q_OK == FALSE) fprintf(stderr, "\nMariadb password. Use: -qXXX or --sqlpwd XXX ");
 		if (s_OK == FALSE) fprintf(stderr, "\nMariadb userid. Use -sXXXX or --sqluser XXX ");
+		if (z_OK == FALSE) fprintf(stderr, "\nZappi serial. Use -zXXXX or --zappi XXX ");
 		fprintf(stderr, "\n");
 		exit(20);
 	}
