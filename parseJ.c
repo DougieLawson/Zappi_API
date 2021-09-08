@@ -44,7 +44,7 @@ int cts[6];
 int statusCode;
 char* statusText;
 
-enum { unknown, asn, bsm, bss, bst, che, cmt, dat, divi, dom, dow, dst, ectp1, ectp2, ectp3, ectp4, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, eddi, expd, frq, fwv, gen, gep, grd, h1b, h1d, harvi, hr, imp, lck, mgl, min, mon, nect1, nect2, nect3, pect1, pect2, pect3, pha, pri, pst, pwm, rac, rdc, rrac, sbh, sbk, sbm, sno, sta, status, statustext, tbk, tim, tz, v1, vol, yr, zappi, zmo, zs,  zsh, zsl };
+enum { unknown, asn, bsm, bss, bst, che, cmt, dat, divi, dom, dow, dst, ectp1, ectp2, ectp3, ectp4, ectp5, ectp6, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, eddi, expd, frq, fwv, gen, gep, grd, h1b, h1d, harvi, hr, imp, lck, mgl, min, mon, nect1, nect2, nect3, pect1, pect2, pect3, pha, pri, pst, pwm, rac, rdc, rrac, sbh, sbk, sbm, sno, sta, status, statustext, tbk, tim, tz, v1, vol, yr, zappi, zmo, zs,  zsh, zsl };
 
 char* none_str = "None";
 
@@ -94,6 +94,8 @@ int lexer(const char *s)
 		{ "ectp2", ectp2 },
 		{ "ectp3", ectp3 },
 		{ "ectp4", ectp4 },
+		{ "ectp5", ectp6 },
+		{ "ectp6", ectp6 },
 		{ "ectt1", ectt1 },
 		{ "ectt2", ectt2 },
 		{ "ectt3", ectt3 },
@@ -298,6 +300,10 @@ json_object* decode_json(json_object* jObj)
 		case ectp3:
 			break;
 		case ectp4:
+			break;
+		case ectp5:
+			break;
+		case ectp6:
 			break;
 		case fwv:
 			break;
