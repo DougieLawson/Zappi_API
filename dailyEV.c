@@ -11,7 +11,7 @@
 #include <mysql.h>
 #include <libgen.h>
 #define CONFIG_FILE "/usr/local/etc/zappi.cfg"
-#define COLUMNS 5
+#define COLUMNS 6
 
 char *comma = " ";
 
@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
 	MYSQL_BIND bind[COLUMNS];
 	MYSQL_RES *prepare_meta_result;
 	MYSQL_TIME ts;
-	float full_usage, zappidiv, zappiimp, charging, house;
+	float full_usage, zappidiv, zappiimp, charging, house, exported;
 	unsigned long length[COLUMNS];
 	my_bool is_null[COLUMNS];
 	my_bool error[COLUMNS];
@@ -75,16 +75,15 @@ int main(int argc, char* argv[])
 	database_g = config_setting_get_member(root, "Database");
 
 	db_host = config_setting_get_member(database_g, "sqlhost");
-	d_host = config_setting_get_string(db_host);
-	db_db = config_setting_get_member(database_g, "sqldbase");
-	d_db = config_setting_get_string(db_db);
 	db_user = config_setting_get_member(database_g, "sqluser");
-	d_user = config_setting_get_string(db_user); 
 	db_pwd = config_setting_get_member(database_g, "sqlpwd");
+	db_db = config_setting_get_member(database_g, "sqldbase");
+
+	d_host = config_setting_get_string(db_host);
+	d_user = config_setting_get_string(db_user); 
 	d_pwd = config_setting_get_string(db_pwd);
+	d_db = config_setting_get_string(db_db);
 
-
-	// CHANGE ME to use a config file
 	if (mysql_real_connect(con, d_host, d_user, d_pwd, d_db, 0, NULL, 0) == NULL)
 	{
 		exit_on_error("Connect", con);
@@ -93,8 +92,8 @@ int main(int argc, char* argv[])
 	printf("X-cgi-name: %s\r\n", basename(getenv("REQUEST_URI")));	
 	printf("X-mariadb-connection-id: %ld\r\n\r\n[\n" , mysql_thread_id(con));
 
-	/* Create SQL statement */
 	sqlTZ = "SET time_zone = 'Europe/London';";
+
 	stmtTZ = mysql_stmt_init(con);
 
 	if (!stmtTZ) 
@@ -110,7 +109,7 @@ int main(int argc, char* argv[])
 	param_count = mysql_stmt_param_count(stmtTZ);
 	if (param_count != 0)
 	{
-	exit_on_error("Invalid param_count", con);
+		exit_on_error("Invalid param_count", con);
 	}
 
 	prepare_meta_result = mysql_stmt_result_metadata(stmtTZ);
@@ -134,11 +133,11 @@ int main(int argc, char* argv[])
 
 	if (!strcmp(basename(getenv("REQUEST_URI")), "weeklyEV"))
 	{
-		sql = "SELECT datetime, imported, zappidiv, zappiimp, house FROM Zappi_test where datetime between date_sub(now(), interval 7 day) and now() order by datetime;";
+		sql = "SELECT datetime, imported, zappidiv, zappiimp, house, exported FROM Zappi_test where datetime between date_sub(now(), interval 7 day) and now() order by datetime;";
 	}
 	else
 	{
-		sql = "SELECT datetime, imported, zappidiv, zappiimp, house FROM Zappi_test where datetime between date_sub(now(), interval 1 day) and now() order by datetime;";
+		sql = "SELECT datetime, imported, zappidiv, zappiimp, house, exported FROM Zappi_test where datetime between date_sub(now(), interval 1 day) and now() order by datetime;";
 	}
 	if (mysql_stmt_prepare(stmt, sql, strlen(sql)))
 	{
@@ -201,16 +200,17 @@ int main(int argc, char* argv[])
 	bind[4].length = &length[4];
 	bind[4].error = &error[4];
 
+	bind[5].buffer_type = MYSQL_TYPE_FLOAT;
+	bind[5].buffer = (float *)&exported;
+	bind[5].is_null = &is_null[5];
+	bind[5].length = &length[5];
+	bind[5].error = &error[5];
+
+
 	if (mysql_stmt_bind_result(stmt, bind))
 	{
 		exit_on_error("Stmt bind result", con);
 	}
-
-// if (mysql_stmt_store_result(stmt))
-// {
-// 	fprintf(stderr,"Store: %s\n", mysql_stmt_error(stmt));
-//	 exit_on_error(con);
-// }
 
 	rc = mysql_stmt_fetch(stmt);
 	while(!rc)
@@ -225,7 +225,10 @@ int main(int argc, char* argv[])
 		printf(",\"Charging\":");
 		printf("%2.2f",charging);
 		printf(",\"House\":");
-		printf("%2.2f}\n",house);
+		printf("%2.2f",house);
+		printf(",\"Export\":");
+		printf("%2.2f",exported);
+		printf(")\n");
 		rc = mysql_stmt_fetch(stmt);
 	}
 
