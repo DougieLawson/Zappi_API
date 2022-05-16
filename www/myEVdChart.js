@@ -1,5 +1,5 @@
 /*
-   Copyright © Dougie Lawson, 2020, All rights reserved.
+   Copyright © Dougie Lawson, 2020-2022, All rights reserved.
  */
 
 function renderChart(dt, fu, c, h, ex) {
