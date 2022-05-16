@@ -3,7 +3,6 @@
  */
 
 function renderChart(dt, fu, c, h, ex) {
-
 	var ctx = document.getElementById("myChart").getContext('2d');
 	var myChart = new Chart(ctx, {
 		type: 'line',
@@ -37,39 +36,42 @@ function renderChart(dt, fu, c, h, ex) {
 			yAxisID: 'Right',
 			borderColor: 'rgba(0, 73, 163, 1)',
 			backgroundColor: 'rgba(0, 73, 163, 0.2)',
-			},
-
+			}
 		]
 	},
 	options: {
 		spanGaps: true,
 		scales: {
-			xAxes: [{
+			xAxes: [
+				{
 				time: {
 					unit: 'minute',
 					displayFormats: {
-						minute: 'DD HH:MM',
+							minute: 'DD HH:MM',
+						},
 					},
-				},
-			}],
-			yAxes: [{
+				}
+			],
+			yAxes: [
+				{
 				id: 'Left',
 				type: 'linear',
 				position: 'left',
-				ticks: {
+				ticks: 	{
 					max: 16500,
-					min: -4500
-				}
-			},
-			{
+					min: -5000
+					}
+				},
+				{
 				id: 'Right',
 				type: 'linear', 
 				position: 'right',
-				ticks: {
+				ticks:	{
 					max: 16500,
-					min: -4500
+					min: -5000
+					}
 				}
-			}]
+			]
 			},
 		}
 	});
@@ -90,7 +92,7 @@ function getChartData() {
 			fu.push(item['Full_usage']);
 			c.push(item['Charging']);
 			h.push(item['House']);
-			ex.push(item['Exported']);
+			ex.push(item['Export']);
 		});
 		renderChart(dt, fu, c, h, ex);
 		});

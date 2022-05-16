@@ -227,7 +227,7 @@ int main(int argc, char* argv[])
 		printf(",\"House\":");
 		printf("%2.2f",house);
 		printf(",\"Export\":");
-		printf("%2.2f",exported);
+		printf("-%2.2f",exported);
 		printf("}\n");
 		rc = mysql_stmt_fetch(stmt);
 	}
