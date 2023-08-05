@@ -1,5 +1,5 @@
 /* 
- Copyright © Dougie Lawson, 2020-2021, All rights reserved 
+ Copyright © Dougie Lawson, 2020-2023, All rights reserved 
 */
 
 #define _XOPEN_SOURCE 700
@@ -38,19 +38,22 @@ char* makeURL (enum URLtype urlT)
 {
 	char* url = malloc(65);
 	char* s;
-	struct tm ctm;
+	time_t rawtime;
+	struct tm* ctm;
 	int dur;
-	if (curTime != NULL && no_delay == FALSE)
+	time(&rawtime);
+	ctm = gmtime(&rawtime);
+	if (no_delay == FALSE)
 	{
-		if (ctm.tm_hour > 2)
+		if (ctm->tm_hour > 2)
 		{
-			ctm.tm_hour -= 2;
+			ctm->tm_hour -= 2;
 		}
-		dur = (24 - ctm.tm_hour) * 60;
+		dur = (24 - ctm->tm_hour) * 60;
 	}
 	else {
-		ctm.tm_hour = 0;
-		ctm.tm_min = 0;
+		ctm->tm_hour = 0;
+		ctm->tm_min = 0;
 		dur = 1440;
 	}
 	switch(urlT)
@@ -59,9 +62,10 @@ char* makeURL (enum URLtype urlT)
 	  		sprintf(url, "https://%s/cgi-jstatus-*", asn);
 			break;
 		case curlJday:
-	  		sprintf(url, "https://%s/cgi-jday-Z%s-%d-%d-%d-%d-%d-%d", asn, serno, tm.tm_year + 1900, tm.tm_mon +1, tm.tm_mday, ctm.tm_hour, ctm.tm_min, dur);
+	  		sprintf(url, "https://%s/cgi-jday-Z%s-%d-%d-%d-%d-%d-%d", asn, serno, tm.tm_year + 1900, tm.tm_mon +1, tm.tm_mday, ctm->tm_hour, ctm->tm_min, dur);
 			break;
 	}
+	printf("%s\n", url);
 	return url;
 }
 

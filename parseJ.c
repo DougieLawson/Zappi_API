@@ -1,5 +1,5 @@
 /* 
- Copyright © Dougie Lawson, 2020-2021, All rights reserved 
+ Copyright © Dougie Lawson, 2020-2023, All rights reserved 
 */
 
 #include <stdio.h>
@@ -44,7 +44,7 @@ int cts[6];
 int statusCode;
 char* statusText;
 
-enum { unknown, asn, bsm, bss, bst, che, cmt, dat, divi, dom, dow, dst, ectp1, ectp2, ectp3, ectp4, ectp5, ectp6, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, eddi, expd, frq, fwv, gen, gep, grd, h1b, h1d, harvi, hr, imp, lck, mgl, min, mon, nect1, nect2, nect3, pect1, pect2, pect3, pha, pri, pst, pwm, rac, rdc, rrac, sbh, sbk, sbm, sno, sta, status, statustext, tbk, tim, tz, v1, vol, yr, zappi, zmo, zs,  zsh, zsl };
+enum { unknown, asn, bde, bsm, bss, bst, btw, che, cmt, dat, divi, dom, dow, dst, ectp1, ectp2, ectp3, ectp4, ectp5, ectp6, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, eddi, expd, frq, fwv, gen, gep, grd, g100, h1b, h1d, harvi, hr, imp, isZ2, lck, mgl, min, mon, nect1, nect2, nect3, napa, nbla, pect1, pect2, pect3, pha, pri, pst, pwm, rac, rdc, rrac, sbh, sbk, sbm, sno, sta, status, statustext, tbk, tim, tz, v1, vol, yr, zappi, zmo, zs, zsh, zsl };
 
 char* none_str = "None";
 
@@ -80,9 +80,11 @@ int lexer(const char *s)
 	token_table[] =
 	{
 		{ "asn", asn },
+		{ "batteryDischargeEnabled", bde },
 		{ "bsm", bsm },
 		{ "bss", bss },
 		{ "bst", bst },
+		{ "beingTamperedWith", btw },
 		{ "che", che },
 		{ "cmt", cmt },
 		{ "dat", dat },
@@ -109,15 +111,19 @@ int lexer(const char *s)
 		{ "gen", gen },
 		{ "gep", gep },
 		{ "grd", grd },
+		{ "g100LockoutState", g100 },
 		{ "harvi", harvi },
 		{ "h1b", h1b },
 		{ "h1d", h1d },
 		{ "hr", hr },
 		{ "imp", imp },
+		{ "isZappi2", isZ2 },
 		{ "lck", lck },
 		{ "mgl", mgl },
 		{ "min", min },
 		{ "mon", mon },
+		{ "newAppAvailable", napa},
+		{ "newBootloaderAvailable", nbla},
 		{ "nect1", nect1 },
 		{ "nect2", nect2 },
 		{ "nect3", nect3 },
@@ -309,7 +315,15 @@ json_object* decode_json(json_object* jObj)
 			break;
 		case grd:
 			break;
+		case g100:
+			break;
+		case isZ2:
+			break;
 		case lck:
+			break;
+		case napa:
+			break;
+		case nbla:
 			break;
 		case mgl:
 			break;
@@ -352,8 +366,8 @@ json_object* decode_json(json_object* jObj)
 		case unknown:
 		default:
 			unk_string = strdup(json_object_get_string(jObj));
-			printf("Key: %s", current_key);
-			printf("String: %s\n", unk_string);
+		 	//	printf("Key: %s", current_key);
+			//	printf("String: %s\n", unk_string);
 
 	}
 	return analyse_result;
