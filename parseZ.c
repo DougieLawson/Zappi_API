@@ -25,6 +25,7 @@ const char* d_pwd;
 
 const char* username;
 const char* password;
+const char* api;
 const char* asn;
 
 time_t t;
@@ -86,8 +87,10 @@ void curl2()
 	curl = curl_easy_init();
 	if(curl)
 	{
+
 		curl_easy_setopt(curl, CURLOPT_USERNAME, username);
-		curl_easy_setopt(curl, CURLOPT_PASSWORD, password);
+		//curl_easy_setopt(curl, CURLOPT_PASSWORD, password);
+		curl_easy_setopt(curl, CURLOPT_PASSWORD, api);
 		curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
 		curl_easy_setopt(curl, CURLOPT_URL, makeURL(curlJday));
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_print);
@@ -182,7 +185,7 @@ int main(int argc, char **argv)
 
 	config_t cfg;
 	config_setting_t *root, *setting;
-	config_setting_t *zappi_g, *z_user, *z_pwd, *z_asn;
+	config_setting_t *zappi_g, *z_user, *z_pwd, *z_asn, *z_api;
 	config_setting_t *database_g, *db_host, *db_db, *db_pwd, *db_user;
 
 	CURL* curl;
@@ -210,8 +213,10 @@ int main(int argc, char **argv)
 
 	z_user = config_setting_get_member(zappi_g, "username");
 	username = config_setting_get_string(z_user);
-	z_pwd = config_setting_get_member(zappi_g, "password");
-	password = config_setting_get_string(z_pwd);
+	//z_pwd = config_setting_get_member(zappi_g, "password");
+	//password = config_setting_get_string(z_pwd);
+	z_api = config_setting_get_member(zappi_g, "api");
+	api = config_setting_get_string(z_api);
 	z_asn = config_setting_get_member(zappi_g, "asn");
 	asn = config_setting_get_string(z_asn);
 
@@ -228,9 +233,11 @@ int main(int argc, char **argv)
 
 	sql_init();
 	if(curl)
+	
 	{
 		curl_easy_setopt(curl, CURLOPT_USERNAME, username);
-		curl_easy_setopt(curl, CURLOPT_PASSWORD, password);
+		//curl_easy_setopt(curl, CURLOPT_PASSWORD, password);
+		curl_easy_setopt(curl, CURLOPT_PASSWORD, api);
 		curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
 		curl_easy_setopt(curl, CURLOPT_URL, makeURL(curlJstatus));
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_print);

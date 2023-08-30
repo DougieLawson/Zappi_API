@@ -1,5 +1,5 @@
 /* 
- Copyright © Dougie Lawson, 2020-2021, All rights reserved 
+ Copyright © Dougie Lawson, 2020-2023, All rights reserved 
 */
 
 #include <stdio.h>     /* for printf */
@@ -11,7 +11,7 @@
 #include <sys/stat.h>
 #include <pcre.h>
 
-#define CONFIG_FILE "/home/pi_d/.zappi.cfg"
+#define CONFIG_FILE "/home/pi_d/.zappi.cfg.new"
 #define MYENERGI_URL "https://director.myenergi.net"
 
 #define FALSE 0
@@ -100,17 +100,17 @@ static size_t curl_header(void* ptr, size_t size, size_t nitems, void* userdata)
 	return nitems * size;
 }
 
-void getASN(config_setting_t* z_user, config_setting_t* z_pwd)
+void getASN(config_setting_t* z_user, config_setting_t* z_cred)
 {
 	CURL* curl;
 	CURLcode res;
 	static const char *outfilenm = "/tmp/curl.out";
 	const char* username;
-	const char* password;
+	const char* credential;
 	FILE* outfile;
 
 	username = config_setting_get_string(z_user);
-	password = config_setting_get_string(z_pwd);
+	credential = config_setting_get_string(z_cred);
 
 	curl_global_init(CURL_GLOBAL_ALL);
  
@@ -118,7 +118,7 @@ void getASN(config_setting_t* z_user, config_setting_t* z_pwd)
 	if(curl) {
 
 		curl_easy_setopt(curl, CURLOPT_USERNAME, username);
-		curl_easy_setopt(curl, CURLOPT_PASSWORD, password);
+		curl_easy_setopt(curl, CURLOPT_PASSWORD, credential);
 		curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
 		curl_easy_setopt(curl, CURLOPT_HEADER, 1);
 		curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, curl_header);
@@ -150,11 +150,11 @@ int main(int argc, char **argv)
 	mode_t mode;
 	config_t cfg;
 	config_setting_t *root, *setting;
-	config_setting_t *zappi, *z_user, *z_pwd, *z_asn, *z_serial;
+	config_setting_t *zappi, *z_user, *z_pwd, *z_asn, *z_serial, *z_api;
 	config_setting_t *database, *d_host, *d_db, *d_pwd, *d_user;
 	config_init(&cfg);
 	root = config_root_setting(&cfg);
-	_Bool u_OK, p_OK, h_OK, d_OK, q_OK, s_OK, z_OK;
+	_Bool u_OK, p_OK, h_OK, d_OK, q_OK, s_OK, z_OK, a_OK;
 	u_OK = FALSE;
 	p_OK = FALSE;
 	h_OK = FALSE;
@@ -162,6 +162,7 @@ int main(int argc, char **argv)
 	q_OK = FALSE;
 	s_OK = FALSE;
 	z_OK = FALSE;
+	a_OK = FALSE;
 
 	zappi = config_setting_add(root, "Zappi", CONFIG_TYPE_GROUP);
 	database = config_setting_add(root, "Database", CONFIG_TYPE_GROUP);
@@ -172,15 +173,17 @@ int main(int argc, char **argv)
 		int option_index = 0;
 		static struct option long_options[] = {
 			{"username", required_argument, 0,  0 },
-			{"password", required_argument, 0,  0 },
+//			{"password", required_argument, 0,  0 },
 			{"sqluser", required_argument, 0,  0 },
 			{"sqlpwd", required_argument, 0,  0 },
 			{"sqlhost", required_argument, 0,  0 },
 			{"sqldbase", required_argument, 0,  0 },
 			{"zappi", required_argument, 0,  0 },
+			{"api", required_argument, 0, 0},
 			{0,          0,                 0,  0 }
 		};
-		c = getopt_long(argc, argv, "u:p:h:d:q:s:z:", long_options, &option_index);
+//		c = getopt_long(argc, argv, "u:p:h:d:q:s:z:a:", long_options, &option_index);
+		c = getopt_long(argc, argv, "u:h:d:q:s:z:a:", long_options, &option_index);
 		if (c == -1) break;
 		switch (c)
 		{
@@ -188,15 +191,16 @@ int main(int argc, char **argv)
 				printf("option --%s", long_options[option_index].name);
 
 				if (!strcmp(long_options[option_index].name, "username")) u_OK = TRUE;
-				else if (!strcmp(long_options[option_index].name, "password")) p_OK = TRUE;
+//				else if (!strcmp(long_options[option_index].name, "password")) p_OK = TRUE;
 				else if (!strcmp(long_options[option_index].name, "sqluser")) s_OK = TRUE;
 				else if (!strcmp(long_options[option_index].name, "sqlhost")) h_OK = TRUE;
 				else if (!strcmp(long_options[option_index].name, "sqldbase")) d_OK = TRUE;
 				else if (!strcmp(long_options[option_index].name, "sqlpwd")) q_OK = TRUE;
 				else if (!strcmp(long_options[option_index].name, "zappi")) z_OK = TRUE;
+				else if (!strcmp(long_options[option_index].name, "api")) a_OK = TRUE;
 
 				if (optarg) printf(" with value %s", optarg);
-				if (option_index == 0 || option_index == 1 || option_index == 6)
+				if (option_index <= 1 || option_index >= 6)
 				{
 					setting = config_setting_add(zappi, long_options[option_index].name, CONFIG_TYPE_STRING);
 				}
@@ -213,11 +217,18 @@ int main(int argc, char **argv)
 				config_setting_set_string(z_user, optarg);
 				u_OK = TRUE;
 				break;
-			case 'p':
+/*			case 'p':
 				printf("option -p with value '%s'\n", optarg);
 				z_pwd = config_setting_add(zappi, "password", CONFIG_TYPE_STRING);
 				config_setting_set_string(z_pwd, optarg);
 				p_OK = TRUE;
+				break;
+				*/
+			case 'a':
+				printf("option -a with value '%s'\n", optarg);
+				z_api = config_setting_add(zappi, "api", CONFIG_TYPE_STRING);
+				config_setting_set_string(z_api, optarg);
+				a_OK = TRUE;
 				break;
 			case 'h':
 				printf("option -h with value '%s'\n", optarg);
@@ -249,7 +260,6 @@ int main(int argc, char **argv)
 				config_setting_set_string(z_serial, optarg);
 				z_OK = TRUE;
 				break;
-
 			case '?':
 				break;
 			default:
@@ -263,20 +273,21 @@ int main(int argc, char **argv)
 		printf("%s ", argv[optind++]);
 		printf("\n");
 	}
-	if (u_OK == FALSE || p_OK == FALSE || h_OK == FALSE || d_OK == FALSE || q_OK == FALSE || s_OK == FALSE || z_OK == FALSE)
+	if (u_OK == FALSE || h_OK == FALSE || d_OK == FALSE || q_OK == FALSE || s_OK == FALSE || z_OK == FALSE || a_OK == FALSE)
 	{
 		fprintf(stderr, "Missing option(s): ");
 		if (u_OK == FALSE) fprintf(stderr, "\nZappi userid. Use: -uXXX or --username XXX ");
-		if (p_OK == FALSE) fprintf(stderr, "\nZappi password. Use:  -pXXX or --password XXX ");
+		//if (p_OK == FALSE) fprintf(stderr, "\nZappi password. Use:  -pXXX or --password XXX ");
 		if (h_OK == FALSE) fprintf(stderr, "\nMariadb hostname or IP address. Use: -h192.168.3.14  or --sqlhost raspberrypi.local ");
 		if (d_OK == FALSE) fprintf(stderr, "\nMariadb database name. Use: -dXXX or --sqldbase XXX ");
 		if (q_OK == FALSE) fprintf(stderr, "\nMariadb password. Use: -qXXX or --sqlpwd XXX ");
 		if (s_OK == FALSE) fprintf(stderr, "\nMariadb userid. Use -sXXXX or --sqluser XXX ");
 		if (z_OK == FALSE) fprintf(stderr, "\nZappi serial. Use -zXXXX or --zappi XXX ");
+		if (a_OK == FALSE) fprintf(stderr, "\nZappi API. Use -aXXXX or --api XXX");
 		fprintf(stderr, "\n");
 		exit(20);
 	}
-	if (u_OK == TRUE && p_OK == TRUE)
+/*	if (u_OK == TRUE && p_OK == TRUE)
 	{
 		z_user = config_setting_get_member(zappi, "username");
 		z_pwd = config_setting_get_member(zappi, "password");
@@ -284,7 +295,15 @@ int main(int argc, char **argv)
 		z_asn = config_setting_add(zappi, "asn", CONFIG_TYPE_STRING);
 		config_setting_set_string(z_asn, matchedString);
 	}
-	else 
+	else */ if (u_OK == TRUE && a_OK == TRUE)
+	{
+		z_user = config_setting_get_member(zappi, "username");
+		z_api = config_setting_get_member(zappi, "api");
+		getASN(z_user, z_api);
+		z_asn = config_setting_add(zappi, "asn", CONFIG_TYPE_STRING);
+		config_setting_set_string(z_asn, matchedString);
+	}
+	else
 	{
 		fprintf(stderr, "\nMissing Myenergi credentials");
 		exit(20);
