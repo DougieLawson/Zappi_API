@@ -1,5 +1,5 @@
 /* 
- Copyright © Dougie Lawson, 2020, All rights reserved 
+ Copyright © Dougie Lawson, 2020-2023, All rights reserved 
 */
 
 #include <stdio.h>
@@ -55,6 +55,10 @@ int main(int argc, char* argv[])
 
 	MYSQL *con = mysql_init(NULL);
 	mysql_options(con, MYSQL_REPORT_DATA_TRUNCATION, &trunc);
+	mysql_options(con, MYSQL_OPT_SSL_CA, "/etc/mysql/ssl-certs/ca-cert.pem");
+	mysql_options(con, MYSQL_OPT_SSL_CERT, "/etc/mysql/ssl-certs/client-cert.pem");
+	mysql_options(con, MYSQL_OPT_SSL_KEY, "/etc/mysql/ssl-certs/client-key.pem");
+	mysql_options(con, MYSQL_OPT_TLS_VERSION, "TLSv1.2,TLSv1.3");
 
 	if( con == NULL )
 	{
