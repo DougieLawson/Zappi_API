@@ -44,7 +44,7 @@ int cts[6];
 int statusCode;
 char* statusText;
 
-enum { unknown, asn, bde, bsm, bss, bst, btw, che, cmt, dat, dcls, divi, dom, dow, dst, ectp1, ectp2, ectp3, ectp4, ectp5, ectp6, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, eddi, expd, frq, fwv, gen, gep, grd, g100, h1b, h1d, harvi, hr, imp, isZ2, lck, mgl, min, mon, nect1, nect2, nect3, napa, nbla, phaseSetting, pect1, pect2, pect3, pha, pri, pst, pwm, rac, rdc, rrac, sbh, sbk, sbm, sno, sta, status, statustext, tbk, tim, tz, v1, vhub, vol, yr, zappi, zmo, zs, zsh, zsl };
+enum { unknown, asn, bde, bsm, bss, bst, btw, che, cmt, dat, dcls, divi, dom, dow, dst, ectp1, ectp2, ectp3, ectp4, ectp5, ectp6, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, eddi, expd, frq, fwv, gen, gep, grd, g100, h1b, h1d, harvi, hr, imp, isvh, isZ2, lck, mgl, min, mon, nect1, nect2, nect3, napa, nbla, phaseSetting, pect1, pect2, pect3, pha, pri, pst, pwm, rac, rdc, rrac, sbh, sbk, sbm, sno, sta, status, statustext, tbk, tim, tz, v1, vhub, vol, yr, zappi, zmo, zs, zsh, zsl };
 
 char* none_str = "None";
 
@@ -118,6 +118,7 @@ int lexer(const char *s)
 		{ "h1d", h1d },
 		{ "hr", hr },
 		{ "imp", imp },
+		{ "isVHubEnabled", isvh },
 		{ "isZappi2", isZ2 },
 		{ "lck", lck },
 		{ "mgl", mgl },
@@ -237,6 +238,8 @@ json_object* decode_json(json_object* jObj)
 			break;
 		case imp:
 			import = json_object_get_int(jObj);
+			break;
+		case isvh:
 			break;
 		case min:
 			minute = json_object_get_int(jObj);
