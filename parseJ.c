@@ -1,5 +1,5 @@
 /* 
- Copyright © Dougie Lawson, 2020-2023, All rights reserved 
+ Copyright © Dougie Lawson, 2020-2024, All rights reserved 
 */
 
 #include <stdio.h>
@@ -44,7 +44,7 @@ int cts[6];
 int statusCode;
 char* statusText;
 
-enum { unknown, asn, bde, bsm, bss, bst, btw, che, cmt, dat, dcls, divi, dom, dow, dst, ectp1, ectp2, ectp3, ectp4, ectp5, ectp6, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, eddi, expd, frq, fwv, gen, gep, grd, g100, h1b, h1d, harvi, hr, imp, isvh, isZ2, lck, mgl, min, mon, nect1, nect2, nect3, napa, nbla, phaseSetting, pect1, pect2, pect3, pha, pri, pst, pwm, rac, rdc, rrac, sbh, sbk, sbm, sno, sta, status, statustext, tbk, tim, tz, v1, vhub, vol, yr, zappi, zmo, zs, zsh, zsl };
+enum { unknown, asn, bde, bsm, bss, bst, btw, che, cmt, dat, dcls, divi, dom, dow, dst, ectp1, ectp2, ectp3, ectp4, ectp5, ectp6, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, eddi, expd, frq, fwv, gen, gep, grd, g100, h1b, h1d, harvi, hr, imp, isvh, isZ2, lck, libbi, mgl, min, mon, nect1, nect2, nect3, napa, nbla, phaseSetting, pect1, pect2, pect3, pha, pri, pst, pwm, rac, rdc, rrac, sbh, sbk, sbm, sno, sta, status, statustext, tbk, tim, tz, v1, vhub, vol, yr, zappi, zmo, zs, zsh, zsl };
 
 char* none_str = "None";
 
@@ -121,6 +121,7 @@ int lexer(const char *s)
 		{ "isVHubEnabled", isvh },
 		{ "isZappi2", isZ2 },
 		{ "lck", lck },
+		{ "libbi", libbi },
 		{ "mgl", mgl },
 		{ "min", min },
 		{ "mon", mon },
@@ -289,11 +290,15 @@ json_object* decode_json(json_object* jObj)
 			break;
 		case asn:
 			break;
+		case bde:
+			break;
 		case bsm:
 			break;
 		case bss:
 			break;
 		case bst:
+			break;
+		case btw:
 			break;
 		case che:
 			break;
@@ -306,6 +311,8 @@ json_object* decode_json(json_object* jObj)
 		case divi:
 			break;
 		case dst:
+			break;
+		case eddi:
 			break;
 		case ectp1:
 			break;
@@ -325,9 +332,13 @@ json_object* decode_json(json_object* jObj)
 			break;
 		case g100:
 			break;
+		case harvi:
+			break;
 		case isZ2:
 			break;
 		case lck:
+			break;
+		case libbi:
 			break;
 		case napa:
 			break;
