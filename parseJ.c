@@ -419,7 +419,10 @@ json_object* json_parse_array(json_object* jObj, int key)
 			if (type != json_type_object)
 			{
 				decode_json(jvalue);
-				json_object_put(jvalue);
+//				if (jvalue != NULL)
+//				{
+//					json_object_put(jvalue);
+//				}
 			}
 			else
 			{

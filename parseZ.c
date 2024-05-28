@@ -235,6 +235,7 @@ int main(int argc, char **argv)
 	if(curl)
 	
 	{
+	// 	curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
 		curl_easy_setopt(curl, CURLOPT_USERNAME, username);
 		//curl_easy_setopt(curl, CURLOPT_PASSWORD, password);
 		curl_easy_setopt(curl, CURLOPT_PASSWORD, api);
