@@ -44,7 +44,7 @@ int cts[6];
 int statusCode;
 char* statusText;
 
-enum { unknown, asn, batteryDischargeEnabld, bsm, bss, bst, beingTamperedWith, che, cmt, dat, dcls, divi, dom, dow, dst, ectp1, ectp2, ectp3, ectp4, ectp5, ectp6, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, eddi, expd, frq, fwv, gen, gep, grd, g100LockoutState, h1b, h1d, harvi, hr, imp, isVHubEnabled, isZ2, lck, libbi, mgl, min, mon, nect1, nect2, nect3, newAppAvailable, newBootloaderAvailable, phaseSetting, pect1, pect2, pect3, pha, productCode, pri, pst, pwm, rac, rdc, rrac, sbh, sbk, sbm, sno, sta, status, statustext, tbk, tim, tz, v1, vhub, vol, yr, zappi, zmo, zs, zsh, zsl };
+enum { unknown, asn, batteryDischargeEnabled, bsm, bss, bst, beingTamperedWith, che, cmt, dat, deviceClass, divi, dom, dow, dst, ectp1, ectp2, ectp3, ectp4, ectp5, ectp6, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, eddi, expd, frq, fwv, gen, gep, grd, g100LockoutState, h1b, h1d, harvi, hr, imp, isVHubEnabled, isZappi2, lck, libbi, mgl, min, mon, nect1, nect2, nect3, newAppAvailable, newBootloaderAvailable, phaseSetting, pect1, pect2, pect3, pha, productCode, pri, pst, pwm, rac, rdc, rrac, sbh, sbk, sbm, sno, sta, status, statustext, tbk, tim, tz, v1, vhub, vol, yr, zappi, zmo, zs, zsh, zsl };
 
 char* none_str = "None";
 
@@ -70,7 +70,7 @@ float ctSums(int ip, int ep, int p1, int p2, int p3, int n1, int n2, int n3)
 }
 
 int lexer(const char *s)
-
+{
 	static struct entry_s
 	{
 		const char *key;
@@ -88,7 +88,7 @@ int lexer(const char *s)
 		{ "che", che },
 		{ "cmt", cmt },
 		{ "dat", dat },
-		{ "deviceClass", dcls },
+		{ "deviceClass", deviceClass },
 		{ "div", divi },
 		{ "dom", dom },
 		{ "dow", dow },
@@ -118,8 +118,8 @@ int lexer(const char *s)
 		{ "h1d", h1d },
 		{ "hr", hr },
 		{ "imp", imp },
-		{ "isVHubEnabled", isVHubenabled },
-		{ "isZappi2", isZ2 },
+		{ "isVHubEnabled", isVHubEnabled },
+		{ "isZappi2", isZappi2 },
 		{ "lck", lck },
 		{ "libbi", libbi },
 		{ "mgl", mgl },
@@ -135,8 +135,8 @@ int lexer(const char *s)
 		{ "pect3", pect3 },
 		{ "phaseSetting", phaseSetting },
 		{ "pha", pha },
-		{ "productCode", productCode },
 		{ "pri", pri },
+		{ "productCode", productCode },
 		{ "pst", pst },
 		{ "pwm", pwm },
 		{ "rac", rac },
@@ -297,7 +297,7 @@ json_object* decode_json(json_object* jObj)
 			break;
 		case dat:
 			break;
-		case dcls:
+		case deviceClass:
 			break;
 		case divi:
 			break;
@@ -327,7 +327,7 @@ json_object* decode_json(json_object* jObj)
 			break;
 		case isVHubEnabled:
 			break;
-		case isZ2:
+		case isZappi2:
 			break;
 		case lck:
 			break;
@@ -335,7 +335,7 @@ json_object* decode_json(json_object* jObj)
 			break;
 		case newAppAvailable:
 			break;
-		case nbla:
+		case newBootloaderAvailable:
 			break;
 		case mgl:
 			break;
@@ -343,9 +343,9 @@ json_object* decode_json(json_object* jObj)
 			break;
 		case pha:
 			break;
-		case productCode:
-			break;
 		case pri:
+			break;
+		case productCode:
 			break;
 		case pwm:
 			break;
