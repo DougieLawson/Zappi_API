@@ -44,7 +44,7 @@ int cts[6];
 int statusCode;
 char* statusText;
 
-enum { unknown, asn, bde, bsm, bss, bst, btw, che, cmt, dat, dcls, divi, dom, dow, dst, ectp1, ectp2, ectp3, ectp4, ectp5, ectp6, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, eddi, expd, frq, fwv, gen, gep, grd, g100, h1b, h1d, harvi, hr, imp, isvh, isZ2, lck, libbi, mgl, min, mon, nect1, nect2, nect3, napa, nbla, phaseSetting, pect1, pect2, pect3, pha, pri, pst, pwm, rac, rdc, rrac, sbh, sbk, sbm, sno, sta, status, statustext, tbk, tim, tz, v1, vhub, vol, yr, zappi, zmo, zs, zsh, zsl };
+enum { unknown, asn, batteryDischargeEnabld, bsm, bss, bst, beingTamperedWith, che, cmt, dat, dcls, divi, dom, dow, dst, ectp1, ectp2, ectp3, ectp4, ectp5, ectp6, ectt1, ectt2, ectt3, ectt4, ectt5, ectt6, eddi, expd, frq, fwv, gen, gep, grd, g100LockoutState, h1b, h1d, harvi, hr, imp, isVHubEnabled, isZ2, lck, libbi, mgl, min, mon, nect1, nect2, nect3, newAppAvailable, newBootloaderAvailable, phaseSetting, pect1, pect2, pect3, pha, productCode, pri, pst, pwm, rac, rdc, rrac, sbh, sbk, sbm, sno, sta, status, statustext, tbk, tim, tz, v1, vhub, vol, yr, zappi, zmo, zs, zsh, zsl };
 
 char* none_str = "None";
 
@@ -70,7 +70,7 @@ float ctSums(int ip, int ep, int p1, int p2, int p3, int n1, int n2, int n3)
 }
 
 int lexer(const char *s)
-{
+
 	static struct entry_s
 	{
 		const char *key;
@@ -80,11 +80,11 @@ int lexer(const char *s)
 	token_table[] =
 	{
 		{ "asn", asn },
-		{ "batteryDischargeEnabled", bde },
+		{ "batteryDischargeEnabled", batteryDischargeEnabled },
 		{ "bsm", bsm },
 		{ "bss", bss },
 		{ "bst", bst },
-		{ "beingTamperedWith", btw },
+		{ "beingTamperedWith", beingTamperedWith },
 		{ "che", che },
 		{ "cmt", cmt },
 		{ "dat", dat },
@@ -112,21 +112,21 @@ int lexer(const char *s)
 		{ "gen", gen },
 		{ "gep", gep },
 		{ "grd", grd },
-		{ "g100LockoutState", g100 },
+		{ "g100LockoutState", g100LockoutState },
 		{ "harvi", harvi },
 		{ "h1b", h1b },
 		{ "h1d", h1d },
 		{ "hr", hr },
 		{ "imp", imp },
-		{ "isVHubEnabled", isvh },
+		{ "isVHubEnabled", isVHubenabled },
 		{ "isZappi2", isZ2 },
 		{ "lck", lck },
 		{ "libbi", libbi },
 		{ "mgl", mgl },
 		{ "min", min },
 		{ "mon", mon },
-		{ "newAppAvailable", napa},
-		{ "newBootloaderAvailable", nbla},
+		{ "newAppAvailable", newAppAvailable},
+		{ "newBootloaderAvailable", newBootloaderAvailable},
 		{ "nect1", nect1 },
 		{ "nect2", nect2 },
 		{ "nect3", nect3 },
@@ -135,6 +135,7 @@ int lexer(const char *s)
 		{ "pect3", pect3 },
 		{ "phaseSetting", phaseSetting },
 		{ "pha", pha },
+		{ "productCode", productCode },
 		{ "pri", pri },
 		{ "pst", pst },
 		{ "pwm", pwm },
@@ -175,7 +176,6 @@ json_object* decode_json(json_object* jObj)
 	{
 		case json_type_object:
 		case json_type_array:
-			//printf("json_type_object\n");
 			analyse_result = json_parse(jObj);
 			break;
 	}
@@ -189,32 +189,26 @@ json_object* decode_json(json_object* jObj)
 		case ectt1:
 			ectt_1 = strdup(json_object_get_string(jObj));
 			cts[1] = strcmp(ectt_1, none_str);
-			//printf("ectt_1 %s cts[1] %d ", ectt_1, cts[1]);
 			break;
 		case ectt2:
 			ectt_2 = strdup(json_object_get_string(jObj));
 			cts[2] = strcmp(ectt_2, none_str);
-			//printf("ectt_2 %s cts[2] %d ", ectt_2, cts[2]);
 			break;
 		case ectt3:
 			ectt_3 = strdup(json_object_get_string(jObj));
 			cts[3] = strcmp(ectt_3, none_str);
-			//printf("ectt_3 %s cts[3] %d ", ectt_3, cts[3]);
 			break;
 		case ectt4:
 			ectt_4 = strdup(json_object_get_string(jObj));
 			cts[4] = strcmp(ectt_4, none_str);
-			//printf("ectt_4 %s cts[4] %d ", ectt_4, cts[4]);
 			break;
 		case ectt5:
 			ectt_5 = strdup(json_object_get_string(jObj));
 			cts[5] = strcmp(ectt_5, none_str);
-			//printf("ectt_5 %s cts[5] %d ", ectt_5, cts[5]);
 			break;
 		case ectt6:
 			ectt_6 = strdup(json_object_get_string(jObj));
 			cts[6] = strcmp(ectt_6, none_str);
-			//printf("ectt_6 %s cts[6] %d\n", ectt_6, cts[6]);
 			break;
 		case expd:
 			exported = json_object_get_int(jObj);
@@ -239,8 +233,6 @@ json_object* decode_json(json_object* jObj)
 			break;
 		case imp:
 			import = json_object_get_int(jObj);
-			break;
-		case isvh:
 			break;
 		case min:
 			minute = json_object_get_int(jObj);
@@ -268,7 +260,6 @@ json_object* decode_json(json_object* jObj)
 			break;
 		case sno:
 			serno = strdup(json_object_get_string(jObj));
-			//printf("SNO: %s\n", serno);
 			curl2();
 			break;
 		case status:
@@ -290,7 +281,7 @@ json_object* decode_json(json_object* jObj)
 			break;
 		case asn:
 			break;
-		case bde:
+		case batteryDischargeEnabled:
 			break;
 		case bsm:
 			break;
@@ -298,7 +289,7 @@ json_object* decode_json(json_object* jObj)
 			break;
 		case bst:
 			break;
-		case btw:
+		case beingTamperedWith:
 			break;
 		case che:
 			break;
@@ -330,9 +321,11 @@ json_object* decode_json(json_object* jObj)
 			break;
 		case grd:
 			break;
-		case g100:
+		case g100LockoutState:
 			break;
 		case harvi:
+			break;
+		case isVHubEnabled:
 			break;
 		case isZ2:
 			break;
@@ -340,7 +333,7 @@ json_object* decode_json(json_object* jObj)
 			break;
 		case libbi:
 			break;
-		case napa:
+		case newAppAvailable:
 			break;
 		case nbla:
 			break;
@@ -349,6 +342,8 @@ json_object* decode_json(json_object* jObj)
 		case phaseSetting:
 			break;
 		case pha:
+			break;
+		case productCode:
 			break;
 		case pri:
 			break;
@@ -389,8 +384,6 @@ json_object* decode_json(json_object* jObj)
 		case unknown:
 		default:
 			unk_string = strdup(json_object_get_string(jObj));
-		 	//	printf("Key: %s", current_key);
-			//	printf("String: %s\n", unk_string);
 
 	}
 	return analyse_result;
@@ -419,10 +412,6 @@ json_object* json_parse_array(json_object* jObj, int key)
 			if (type != json_type_object)
 			{
 				decode_json(jvalue);
-//				if (jvalue != NULL)
-//				{
-//					json_object_put(jvalue);
-//				}
 			}
 			else
 			{
@@ -440,8 +429,6 @@ json_object* json_parse_array(json_object* jObj, int key)
 
 json_object* json_object_parse(json_object* jObj)
 {
-	//printf("\n-----------------\n");
-	
 	minute = 0;
 	hour = 0;
 	day_of_month = 0;
@@ -489,8 +476,6 @@ json_object* json_object_parse(json_object* jObj)
 
 		}
 	}
-//	printf("%04d-%02d-%02d %02d:%02d ", year, month, day_of_month, hour, minute); 
-//	printf("%s imp: %4.1f exp: %4.1f gen+: %4.1f gen-: %4.1f zappi imp: %4.1f zappi div: %4.1f voltage: %3.1f freq: %2.2f pect1: %4.1f nect1: %4.1f pect2: %4.1f nect2: %4.1f pect3: %4.1f nect3: %4.1f ctSums: %4.1f\n", day_of_week, watts(import), watts(exported), watts(genplus), watts(genminus), watts(zappiimp), watts(zappidiv), (float)voltage/10.0, (float)frequency/100.0, watts(pect_1), watts(nect_1), watts(pect_2), watts(nect_2), watts(pect_3), watts(nect_3), ctSums(import, exported, pect_1, pect_2, pect_3, nect_1, nect_2, nect_3)); 
 
 	sql_insert();
 	if (parse_result == NULL) return parse_result;
