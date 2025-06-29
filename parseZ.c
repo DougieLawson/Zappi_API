@@ -26,7 +26,7 @@ const char* d_pwd;
 const char* username;
 const char* password;
 const char* api;
-const char* asn;
+//const char* asn;
 
 time_t t;
 struct tm tm;
@@ -60,10 +60,12 @@ char* makeURL (enum URLtype urlT)
 	switch(urlT)
 	{
 		case curlJstatus:
-	  		sprintf(url, "https://%s/cgi-jstatus-*", asn);
+//	  		sprintf(url, "https://%s/cgi-jstatus-*", asn);
+	  		sprintf(url, "https://s18.myenergi.net/cgi-jstatus-*");
 			break;
 		case curlJday:
-	  		sprintf(url, "https://%s/cgi-jday-Z%s-%d-%d-%d-%d-%d-%d", asn, serno, tm.tm_year + 1900, tm.tm_mon +1, tm.tm_mday, ctm->tm_hour, ctm->tm_min, dur);
+//	  		sprintf(url, "https://%s/cgi-jday-Z%s-%d-%d-%d-%d-%d-%d", asn, serno, tm.tm_year + 1900, tm.tm_mon +1, tm.tm_mday, ctm->tm_hour, ctm->tm_min, dur);
+	  		sprintf(url, "https://s18.myenergi.net/cgi-jday-Z%s-%d-%d-%d-%d-%d-%d", serno, tm.tm_year + 1900, tm.tm_mon +1, tm.tm_mday, ctm->tm_hour, ctm->tm_min, dur);
 			break;
 	}
 	printf("%s\n", url);
@@ -185,7 +187,8 @@ int main(int argc, char **argv)
 
 	config_t cfg;
 	config_setting_t *root, *setting;
-	config_setting_t *zappi_g, *z_user, *z_pwd, *z_asn, *z_api;
+//	config_setting_t *zappi_g, *z_user, *z_pwd, *z_asn, *z_api;
+	config_setting_t *zappi_g, *z_user, *z_pwd, *z_api;
 	config_setting_t *database_g, *db_host, *db_db, *db_pwd, *db_user;
 
 	CURL* curl;
@@ -217,8 +220,8 @@ int main(int argc, char **argv)
 	//password = config_setting_get_string(z_pwd);
 	z_api = config_setting_get_member(zappi_g, "api");
 	api = config_setting_get_string(z_api);
-	z_asn = config_setting_get_member(zappi_g, "asn");
-	asn = config_setting_get_string(z_asn);
+//	z_asn = config_setting_get_member(zappi_g, "asn");
+//	asn = config_setting_get_string(z_asn);
 
 	database_g = config_setting_get_member(root, "Database");
 

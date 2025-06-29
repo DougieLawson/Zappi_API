@@ -1,5 +1,5 @@
 /* 
- Copyright © Dougie Lawson, 2020-2024, All rights reserved 
+ Copyright © Dougie Lawson, 2020-2025, All rights reserved 
 */
 
 #include <stdio.h>     /* for printf */
@@ -7,140 +7,140 @@
 #include <string.h>
 #include <getopt.h>
 #include <libconfig.h>
-#include <curl/curl.h>
+//#include <curl/curl.h>
 #include <sys/stat.h>
-#include <pcre.h>
+//#include <pcre.h>
 
 #define CONFIG_FILE "/home/pi_d/.zappi.cfg.new"
-#define MYENERGI_URL "https://director.myenergi.net"
+//#define MYENERGI_URL "https://director.myenergi.net"
 
 #define FALSE 0
 #define TRUE !(FALSE)
 
-const char* matchedString;
-int offsetVector[30];
+//const char* matchedString;
+//int offsetVector[30];
 
-int findMy(void* testString)
-{
-	char* regexPattern;
-	pcre* regexComp;
-	pcre_extra* regExtra;
-	int regexErrorCode;
-	int regexErrorOffset;
-	const char* regexErrorStr;
-	int j;
+//int findMy(void* testString)
+//{
+//	char* regexPattern;
+//	pcre* regexComp;
+//	pcre_extra* regExtra;
+//	int regexErrorCode;
+//	int regexErrorOffset;
+//	const char* regexErrorStr;
+//	int j;
+//
+//	regexPattern = "x_myenergi-asn: (.*.myenergi.net)";
+//	regexComp = pcre_compile(regexPattern, PCRE_CASELESS, &regexErrorStr, &regexErrorOffset, NULL);
+//	if (regexComp == NULL) 
+//	{
+//		printf("Error: %s %s\n", regexPattern, regexErrorStr);
+//		exit(1);
+//	}
 
-	regexPattern = "x_myenergi-asn: (.*.myenergi.net)";
-	regexComp = pcre_compile(regexPattern, PCRE_CASELESS, &regexErrorStr, &regexErrorOffset, NULL);
-	if (regexComp == NULL) 
-	{
-		printf("Error: %s %s\n", regexPattern, regexErrorStr);
-		exit(1);
-	}
+//	regExtra = pcre_study(regexComp, 0, &regexErrorStr);
+//	if (regexErrorStr != NULL)
+//	{
+//		printf("Study: %s %s\n", regexPattern, regexErrorStr);
+//		exit(1);
+//	}
+//	regexErrorCode = pcre_exec(regexComp, regExtra, testString,
+//		strlen(testString), 0, 0, offsetVector, 30);
+//	if (regexErrorCode > 0)
+//	{
+//		pcre_get_substring(testString, offsetVector, regexErrorCode, 1, &(matchedString));
+//	}
+//	else if (regexErrorCode < 0)
+//	{
+//		switch(regexErrorCode)
+//		{
+//			case PCRE_ERROR_NOMATCH : 
+//				//printf("No match\n"); 
+//				break;
+//			case PCRE_ERROR_NULL : 
+//				printf("Null\n"); 
+//				break;
+//			case PCRE_ERROR_BADOPTION : 
+//				printf("Bad option\n"); 
+//				break;
+//			case PCRE_ERROR_BADMAGIC : 
+//				printf("Voodoo\n"); 
+//				break;
+//			case PCRE_ERROR_UNKNOWN_NODE : 
+//				printf("Something kooky\n"); 
+//				break;
+//			case PCRE_ERROR_NOMEMORY : 
+//				printf("Oom\n"); 
+//				break;
+//			default : printf("Very bad\n"); break;
+//		}
+//	}
+//	else
+//	{
+//		printf("No error, but no match");
+//	}
+//	pcre_free(regexComp);
+//	if (regExtra != NULL)
+//	{
+//		pcre_free_study(regExtra);
+//	}
+//	return 0;
+//}
 
-	regExtra = pcre_study(regexComp, 0, &regexErrorStr);
-	if (regexErrorStr != NULL)
-	{
-		printf("Study: %s %s\n", regexPattern, regexErrorStr);
-		exit(1);
-	}
-	regexErrorCode = pcre_exec(regexComp, regExtra, testString,
-		strlen(testString), 0, 0, offsetVector, 30);
-	if (regexErrorCode > 0)
-	{
-		pcre_get_substring(testString, offsetVector, regexErrorCode, 1, &(matchedString));
-	}
-	else if (regexErrorCode < 0)
-	{
-		switch(regexErrorCode)
-		{
-			case PCRE_ERROR_NOMATCH : 
-				//printf("No match\n"); 
-				break;
-			case PCRE_ERROR_NULL : 
-				printf("Null\n"); 
-				break;
-			case PCRE_ERROR_BADOPTION : 
-				printf("Bad option\n"); 
-				break;
-			case PCRE_ERROR_BADMAGIC : 
-				printf("Voodoo\n"); 
-				break;
-			case PCRE_ERROR_UNKNOWN_NODE : 
-				printf("Something kooky\n"); 
-				break;
-			case PCRE_ERROR_NOMEMORY : 
-				printf("Oom\n"); 
-				break;
-			default : printf("Very bad\n"); break;
-		}
-	}
-	else
-	{
-		printf("No error, but no match");
-	}
-	pcre_free(regexComp);
-	if (regExtra != NULL)
-	{
-		pcre_free_study(regExtra);
-	}
-	return 0;
-}
-
-static size_t curl_print(void* ptr, size_t size, size_t nmemb, void* stream)
-{
-	size_t written =  fwrite(ptr, size, nmemb, (FILE*)stream);
+//static size_t curl_print(void* ptr, size_t size, size_t nmemb, void* stream)
+//{
+//	size_t written =  fwrite(ptr, size, nmemb, (FILE*)stream);
 	//size_t realsize = size * nmemb;
-	return written; 
-}
+//	return written; 
+//}
 
-static size_t curl_header(void* ptr, size_t size, size_t nitems, void* userdata)
-{
-	findMy(ptr);
-	return nitems * size;
-}
+//static size_t curl_header(void* ptr, size_t size, size_t nitems, void* userdata)
+//{
+//	findMy(ptr);
+//	return nitems * size;
+//}
 
-void getASN(config_setting_t* z_user, config_setting_t* z_cred)
-{
-	CURL* curl;
-	CURLcode res;
-	static const char *outfilenm = "/tmp/curl.out";
-	const char* username;
-	const char* credential;
-	FILE* outfile;
-
-	username = config_setting_get_string(z_user);
-	credential = config_setting_get_string(z_cred);
-
-	curl_global_init(CURL_GLOBAL_ALL);
- 
-	curl = curl_easy_init();
-	if(curl) {
-
-		curl_easy_setopt(curl, CURLOPT_USERNAME, username);
-		curl_easy_setopt(curl, CURLOPT_PASSWORD, credential);
-		curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
-		curl_easy_setopt(curl, CURLOPT_HEADER, 1);
-		curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, curl_header);
-		curl_easy_setopt(curl, CURLOPT_URL, MYENERGI_URL);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_print);
-
-		outfile = fopen(outfilenm, "wb");
-		if (outfile) {
-			curl_easy_setopt(curl, CURLOPT_WRITEDATA, outfile);
-
-    			res = curl_easy_perform(curl);
-   		 	if(res != CURLE_OK)
-				fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-			fclose(outfile);
-		}
-	curl_easy_cleanup(curl);
-	}
- 
-	curl_global_cleanup();
- 
-	printf("Match: (%2d, %2d): %s\n", offsetVector[2], offsetVector[3], matchedString);
-}
+//void getASN(config_setting_t* z_user, config_setting_t* z_cred)
+//{
+//	CURL* curl;
+//	CURLcode res;
+//	static const char *outfilenm = "/tmp/curl.out";
+//	const char* username;
+//	const char* credential;
+//	FILE* outfile;
+//
+//	username = config_setting_get_string(z_user);
+//	credential = config_setting_get_string(z_cred);
+//
+//	curl_global_init(CURL_GLOBAL_ALL);
+// 
+//	curl = curl_easy_init();
+//	if(curl) {
+//
+//		curl_easy_setopt(curl, CURLOPT_USERNAME, username);
+//		curl_easy_setopt(curl, CURLOPT_PASSWORD, credential);
+//		curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
+//		curl_easy_setopt(curl, CURLOPT_HEADER, 1);
+//		curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, curl_header);
+//		curl_easy_setopt(curl, CURLOPT_URL, MYENERGI_URL);
+//		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_print);
+//
+//		outfile = fopen(outfilenm, "wb");
+//		if (outfile) {
+//			curl_easy_setopt(curl, CURLOPT_WRITEDATA, outfile);
+//
+//  			res = curl_easy_perform(curl);
+// 		 	if(res != CURLE_OK)
+//			fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+//			fclose(outfile);
+//		}
+//	curl_easy_cleanup(curl);
+//	}
+// 
+//	curl_global_cleanup();
+// 
+//	printf("Match: (%2d, %2d): %s\n", offsetVector[2], offsetVector[3], matchedString);
+//}
 
 int main(int argc, char **argv)
 {
@@ -173,7 +173,6 @@ int main(int argc, char **argv)
 		int option_index = 0;
 		static struct option long_options[] = {
 			{"username", required_argument, 0,  0 },
-//			{"password", required_argument, 0,  0 },
 			{"sqluser", required_argument, 0,  0 },
 			{"sqlpwd", required_argument, 0,  0 },
 			{"sqlhost", required_argument, 0,  0 },
@@ -182,7 +181,6 @@ int main(int argc, char **argv)
 			{"api", required_argument, 0, 0},
 			{0,          0,                 0,  0 }
 		};
-//		c = getopt_long(argc, argv, "u:p:h:d:q:s:z:a:", long_options, &option_index);
 		c = getopt_long(argc, argv, "u:h:d:q:s:z:a:", long_options, &option_index);
 		if (c == -1) break;
 		switch (c)
@@ -191,7 +189,6 @@ int main(int argc, char **argv)
 				printf("option --%s", long_options[option_index].name);
 
 				if (!strcmp(long_options[option_index].name, "username")) u_OK = TRUE;
-//				else if (!strcmp(long_options[option_index].name, "password")) p_OK = TRUE;
 				else if (!strcmp(long_options[option_index].name, "sqluser")) s_OK = TRUE;
 				else if (!strcmp(long_options[option_index].name, "sqlhost")) h_OK = TRUE;
 				else if (!strcmp(long_options[option_index].name, "sqldbase")) d_OK = TRUE;
@@ -217,13 +214,6 @@ int main(int argc, char **argv)
 				config_setting_set_string(z_user, optarg);
 				u_OK = TRUE;
 				break;
-/*			case 'p':
-				printf("option -p with value '%s'\n", optarg);
-				z_pwd = config_setting_add(zappi, "password", CONFIG_TYPE_STRING);
-				config_setting_set_string(z_pwd, optarg);
-				p_OK = TRUE;
-				break;
-				*/
 			case 'a':
 				printf("option -a with value '%s'\n", optarg);
 				z_api = config_setting_add(zappi, "api", CONFIG_TYPE_STRING);
@@ -277,7 +267,6 @@ int main(int argc, char **argv)
 	{
 		fprintf(stderr, "Missing option(s): ");
 		if (u_OK == FALSE) fprintf(stderr, "\nZappi userid. Use: -uXXX or --username XXX ");
-		//if (p_OK == FALSE) fprintf(stderr, "\nZappi password. Use:  -pXXX or --password XXX ");
 		if (h_OK == FALSE) fprintf(stderr, "\nMariadb hostname or IP address. Use: -h192.168.3.14  or --sqlhost raspberrypi.local ");
 		if (d_OK == FALSE) fprintf(stderr, "\nMariadb database name. Use: -dXXX or --sqldbase XXX ");
 		if (q_OK == FALSE) fprintf(stderr, "\nMariadb password. Use: -qXXX or --sqlpwd XXX ");
@@ -287,27 +276,19 @@ int main(int argc, char **argv)
 		fprintf(stderr, "\n");
 		exit(20);
 	}
-/*	if (u_OK == TRUE && p_OK == TRUE)
-	{
-		z_user = config_setting_get_member(zappi, "username");
-		z_pwd = config_setting_get_member(zappi, "password");
-		getASN(z_user, z_pwd);
-		z_asn = config_setting_add(zappi, "asn", CONFIG_TYPE_STRING);
-		config_setting_set_string(z_asn, matchedString);
-	}
-	else */ if (u_OK == TRUE && a_OK == TRUE)
-	{
-		z_user = config_setting_get_member(zappi, "username");
-		z_api = config_setting_get_member(zappi, "api");
-		getASN(z_user, z_api);
-		z_asn = config_setting_add(zappi, "asn", CONFIG_TYPE_STRING);
-		config_setting_set_string(z_asn, matchedString);
-	}
-	else
-	{
-		fprintf(stderr, "\nMissing Myenergi credentials");
-		exit(20);
-	}
+//      if (u_OK == TRUE && a_OK == TRUE)
+//	{
+//		z_user = config_setting_get_member(zappi, "username");
+//		z_api = config_setting_get_member(zappi, "api");
+//		getASN(z_user, z_api);
+//		z_asn = config_setting_add(zappi, "asn", CONFIG_TYPE_STRING);
+//		config_setting_set_string(z_asn, matchedString);
+//	}
+//	else
+//	{
+//		fprintf(stderr, "\nMissing Myenergi credentials");
+//		exit(20);
+//	}
 	if(! config_write_file(&cfg, output_file))
 	{
 		fprintf(stderr, "Error while writing file.\n");
